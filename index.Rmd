@@ -1,9 +1,9 @@
 --- 
-title: "First R Bookdown"
-author: "Sam J"
+title: "TRTDASF"
+author: "Sam Jasper, Alex Pirsos, Jackson de Oliveira"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Down the rabbit-hole
+# To Rule Them All: DS Flowcharts
 
