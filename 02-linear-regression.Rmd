@@ -1,2 +1,88 @@
 # Linear Regression
 
+
+```{r setup, echo=FALSE, warning=FALSE}
+library(DiagrammeR) 
+
+```
+
+```{r diagram, echo=FALSE}
+
+grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  1 [label = 'Build a linear model with all variables']
+  H [label = 'Re-evaluate Variables 
+  and/or Model Type']
+  10 [label = '1. WLS/IRLS
+  2. Transform
+  3. Different Distribution']
+  13 [label = 'Remove Var(s) or 
+  Create new transformed vars']
+  14 [label = 'Handle Influential 
+  Observations']
+  15 [label = 'Choose Model Evaluation
+  Statistic']
+  16 [label = 'Select Variable 
+  Selection Technique']
+  17 [label = 'Select Model 
+  Evaluation Statistic']
+  18 [label = 'Summarize
+  Findings']
+  
+  node [shape = diamond]
+  2 [label = 'Is a global F-Test 
+  significant?']
+  3 [label = 'Test Assumptions: 
+  Linearity of the mean']
+  6 [label = 'Residuals Polynomial?
+  Use Higher Order']
+  4 [label = 'Test Assumptions: 
+  Independent Random Errors']
+  5 [label = 'Test Assumptions:
+  Normality']
+  7 [label = 'Box Cox Transform']
+  8 [label = 'Transform X-Values']
+  9 [label = 'Test Assumptions: 
+  Equal Variance']
+  11 [label = 'Multiple X-Vars?']
+  12 [label = 'Any VIF > 10?']
+
+  
+  # edge definitions with the node IDs
+  1 -> 2
+  H -> 1
+  2 -> H [label = 'No']
+  2 -> 3 [label = 'Yes']
+  3 -> 4 [label = 'Yes']
+  3 -> 6 [label = 'No']
+  6 -> H [label = 'Yes']
+  6 -> H [label = 'No']
+  4 -> 5 [label = 'Yes']
+  4 -> H [label = 'No']
+  5 -> 7 [label = 'No']
+  7 -> 8 [label = 'No']
+  8 -> H [label = 'No']
+  5 -> 9 [label = 'Normal']
+  7 -> 9 [label = 'Normal']
+  8 -> 9 [label = 'Normal']
+  9 -> 10 [label = 'No']
+  10 -> H [label = 'No']
+  9 -> 11 [label = 'Yes']
+  11 -> 12 [label = 'Yes']
+  12 -> 13 [label = 'Yes']
+  11 -> 14 [label = 'No']
+  13 -> 14
+  12 -> 14 [label = 'No']
+  14 -> 15
+  15 -> 16
+  16 -> 17
+  17 -> 18
+  
+
+  }")
+
+```
+
+

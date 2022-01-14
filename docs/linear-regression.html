@@ -24,7 +24,7 @@
 <meta name="author" content="Sam Jasper, Alex Pirsos, Jackson de Oliveira" />
 
 
-<meta name="date" content="2021-12-17" />
+<meta name="date" content="2022-01-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -53,6 +53,10 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 
 
 
@@ -113,6 +117,8 @@
             <section class="normal" id="section-">
 <div id="linear-regression" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Linear Regression</h1>
+<div id="htmlwidget-de0a4b7767c3a12ca68f" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-de0a4b7767c3a12ca68f">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  1 [label = \"Build a linear model with all variables\"]\n  H [label = \"Re-evaluate Variables \n  and/or Model Type\"]\n  10 [label = \"1. WLS/IRLS\n  2. Transform\n  3. Different Distribution\"]\n  13 [label = \"Remove Var(s) or \n  Create new transformed vars\"]\n  14 [label = \"Handle Influential \n  Observations\"]\n  15 [label = \"Choose Model Evaluation\n  Statistic\"]\n  16 [label = \"Select Variable \n  Selection Technique\"]\n  17 [label = \"Select Model \n  Evaluation Statistic\"]\n  18 [label = \"Summarize\n  Findings\"]\n  \n  node [shape = diamond]\n  2 [label = \"Is a global F-Test \n  significant?\"]\n  3 [label = \"Test Assumptions: \n  Linearity of the mean\"]\n  6 [label = \"Residuals Polynomial?\n  Use Higher Order\"]\n  4 [label = \"Test Assumptions: \n  Independent Random Errors\"]\n  5 [label = \"Test Assumptions:\n  Normality\"]\n  7 [label = \"Box Cox Transform\"]\n  8 [label = \"Transform X-Values\"]\n  9 [label = \"Test Assumptions: \n  Equal Variance\"]\n  11 [label = \"Multiple X-Vars?\"]\n  12 [label = \"Any VIF > 10?\"]\n\n  \n  # edge definitions with the node IDs\n  1 -> 2\n  H -> 1\n  2 -> H [label = \"No\"]\n  2 -> 3 [label = \"Yes\"]\n  3 -> 4 [label = \"Yes\"]\n  3 -> 6 [label = \"No\"]\n  6 -> H [label = \"Yes\"]\n  6 -> H [label = \"No\"]\n  4 -> 5 [label = \"Yes\"]\n  4 -> H [label = \"No\"]\n  5 -> 7 [label = \"No\"]\n  7 -> 8 [label = \"No\"]\n  8 -> H [label = \"No\"]\n  5 -> 9 [label = \"Normal\"]\n  7 -> 9 [label = \"Normal\"]\n  8 -> 9 [label = \"Normal\"]\n  9 -> 10 [label = \"No\"]\n  10 -> H [label = \"No\"]\n  9 -> 11 [label = \"Yes\"]\n  11 -> 12 [label = \"Yes\"]\n  12 -> 13 [label = \"Yes\"]\n  11 -> 14 [label = \"No\"]\n  13 -> 14\n  12 -> 14 [label = \"No\"]\n  14 -> 15\n  15 -> 16\n  16 -> 17\n  17 -> 18\n  \n\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 </div>
             </section>
