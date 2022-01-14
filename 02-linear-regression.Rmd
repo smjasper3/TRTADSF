@@ -4,9 +4,10 @@
 ```{r setup, echo=FALSE, warning=FALSE}
 library(DiagrammeR) 
 
+
 ```
 
-```{r diagram, echo=FALSE}
+```{r diagram, echo=FALSE, fig.height=14, fig.width=8}
 
 grViz("digraph {
   graph [layout = dot, rankdir = TB]
@@ -42,12 +43,16 @@ grViz("digraph {
   Independent Random Errors']
   5 [label = 'Test Assumptions:
   Normality']
-  7 [label = 'Box Cox Transform']
-  8 [label = 'Transform X-Values']
+  7 [label = 'Box Cox 
+  Transform']
+  8 [label = 'Transform 
+  X-Values']
   9 [label = 'Test Assumptions: 
   Equal Variance']
-  11 [label = 'Multiple X-Vars?']
-  12 [label = 'Any VIF > 10?']
+  11 [label = 'Multiple 
+  X-Vars?']
+  12 [label = 'Any VIF 
+  > 10?']
 
   
   # edge definitions with the node IDs
@@ -84,5 +89,118 @@ grViz("digraph {
   }")
 
 ```
+
+## Select Alpha Level
+<span style="color:blue;"> *snippet fsr_alpha *</span>
+
+There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size. 
+
+## Create Linear Model of All Variables
+
+Assuming you have a reasonable number of variables, start by putting them all into a model to predict the target. Variable selection/ reduction will occur later in the process. If you have a large number of variables, you can consider variable reduction or a different analytical technique.
+
+## Global F-Test
+
+<span style="color:blue;"> *snippet fsr_globalF* </span>
+
+Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process. 
+
+## Assumptions
+
+Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms. 
+
+### Linearity
+
+<span style="color:blue;"> *snippet fsr_assumptions_independence* </span>
+
+Check if they are linear (yes, keep moving)
+(No) If they look polynomial/ quadratic/ etc. reconsider higher order terms 
+
+
+### Independent Random Errors
+
+<span style="color:blue;"> *snippet fsr_assumptions_independence *</span>
+
+Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test. 
+
+
+### Random Error Constant Variance
+
+<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span>
+
+Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
+
+
+### Random Errors Normally Distributed
+
+<span style="color:blue;"> *snippet fsr_assumptions_normdist *</span>
+
+Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x's. 
+
+
+### Single Predictor?
+
+The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step. 
+
+
+### Multiple Predictors
+#### Check for Multicollinearity
+
+<span style="color:blue;"> *snippet fsr_assumptions_multicol *</span>
+
+If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers. 
+
+## Influential Observations / Outliers
+
+Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected. 
+
+### Identify influential observations 
+
+<span style="color:blue;"> *snippet fsr_influential*</span>
+
+* Internally Studentized residuals (good for detecting outliers) 
+
+* Externally Studentized residuals (good for detecting outliers)
+
+* Cook's D (good for detecting influential observations)
+
+* DFFITS (good for detecting influential observations)
+
+* DFBETAS (good for detecting influential observations) 
+
+* Hat values (good for detecting influential observations) 
+  
+### Handle Influential Observations 
+
+<span style="color:blue;"> *snippet fsr_outliers*</span>
+
+1. Recheck the data to ensure that no transcription or data entry errors 
+  occurred. 
+2. If the data is valid, one possible explanation is that 
+  the model is not adequate. 
+    + A model with higher-order terms, such as polynomials and interactions between the variables, might be necessary to fit the data well. 
+    + Nonlinear model 
+3. Determine the robustness of the inference bv running the analysis both with and without the influential observations. 
+4. Robust Regression (Covered Later in Program) 
+5. Weighted Least Squares (WCS) 
+
+## Variable Selection
+
+<span style="color:blue;"> *snippet fsr_varselect_linreg*</span>
+
+When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value. 
+
+## Model Evaluation
+
+<span style="color:blue;"> *snippet fsr_modeval*</span>
+
+After the variables are selected, it's time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics. 
+
+
+## Summarize Findings
+
+With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context. 
+
+
 
 
