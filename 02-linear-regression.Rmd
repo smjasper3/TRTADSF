@@ -4,7 +4,6 @@
 ```{r setup, echo=FALSE, warning=FALSE}
 library(DiagrammeR) 
 
-
 ```
 
 ```{r diagram, echo=FALSE, fig.height=14, fig.width=8}
