@@ -92,7 +92,7 @@ grViz("digraph {
 ## Select Alpha Level
 <span style="color:blue;"> *snippet fsr_alpha *</span>
 
-There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.
+There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size. <THIS IS A TEST>
 
 ```{r diagram, results='hide'}
 #Determines alpha value based on sample size and BIC criterion
