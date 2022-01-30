@@ -96,8 +96,8 @@ readr::write_lines(htmlhead, path = "header.html")
 grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
-  node [shape = rectangle, fontsize=40]        
-  0 [label = 'START HERE!', color = 'aqua']
+  node [shape = rectangle, fontsize=40, style=filled, color=lightblue1]
+  0 [label = 'START HERE!', color = cornflowerblue, style=filled]
   1 [label = 'Build a linear model with all variables']
   H [label = 'Re-evaluate Variables 
   and/or Model Type']
@@ -117,7 +117,7 @@ grViz("digraph {
   18 [label = 'Summarize
   Findings']
   
-  node [shape = diamond, fontsize=40]
+  node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]
   2 [label = 'Is a global F-Test 
   significant?']
   3 [label = 'Test Assumptions: 
@@ -141,35 +141,35 @@ grViz("digraph {
 
   
   # edge definitions with the node IDs
-  0 -> 1
-  1 -> 2
-  H -> 1
-  2 -> H [label = 'No', fontsize=40]
-  2 -> 3 [label = 'Yes', fontsize=40]
-  3 -> 4 [label = 'Yes', fontsize=40]
-  3 -> 6 [label = 'No', fontsize=40]
-  6 -> H [label = 'Yes', fontsize=40]
-  6 -> H [label = 'No', fontsize=40]
-  4 -> 5 [label = 'Yes', fontsize=40]
-  4 -> H [label = 'No', fontsize=40]
-  5 -> 7 [label = 'No', fontsize=40]
-  7 -> 8 [label = 'No', fontsize=40]
-  8 -> H [label = 'No', fontsize=40]
-  5 -> 9 [label = 'Normal', fontsize=40]
-  7 -> 9 [label = 'Normal', fontsize=40]
-  8 -> 9 [label = 'Normal', fontsize=40]
-  9 -> 10 [label = 'No', fontsize=40]
-  10 -> H [label = 'No', fontsize=40]
-  9 -> 11 [label = 'Yes', fontsize=40]
-  11 -> 12 [label = 'Yes', fontsize=40]
-  12 -> 13 [label = 'Yes', fontsize=40]
-  11 -> 14 [label = 'No', fontsize=40]
-  13 -> 14
-  12 -> 14 [label = 'No', fontsize=40]
-  14 -> 15
-  15 -> 16
-  16 -> 17
-  17 -> 18
+  0 -> 1 [style=bold]
+  1 -> 2 [style=bold]
+  H -> 1 [style=bold]
+  2 -> H [label = 'No', fontsize=40, color=dashed]
+  2 -> 3 [label = 'Yes', fontsize=40, style=bold]
+  3 -> 4 [label = 'Yes', fontsize=40, style=bold]
+  3 -> 6 [label = 'No', fontsize=40, style=dashed]
+  6 -> H [label = 'Yes', fontsize=40, style=bold]
+  6 -> H [label = 'No', fontsize=40, style=dashed]
+  4 -> 5 [label = 'Yes', fontsize=40, style=bold]
+  4 -> H [label = 'No', fontsize=40, style=dashed]
+  5 -> 7 [label = 'No', fontsize=40, style=dashed]
+  7 -> 8 [label = 'No', fontsize=40, style=dashed]
+  8 -> H [label = 'No', fontsize=40, style=dashed]
+  5 -> 9 [label = 'Normal', fontsize=40, style=bold]
+  7 -> 9 [label = 'Normal', fontsize=40, style=bold]
+  8 -> 9 [label = 'Normal', fontsize=40, style=bold]
+  9 -> 10 [label = 'No', fontsize=40, style=dashed]
+  10 -> H [label = 'No', fontsize=40, style=dashed]
+  9 -> 11 [label = 'Yes', fontsize=40, style=bold]
+  11 -> 12 [label = 'Yes', fontsize=40, style=bold]
+  12 -> 13 [label = 'Yes', fontsize=40, style=bold]
+  11 -> 14 [label = 'No', fontsize=40, style=dashed]
+  13 -> 14 [style=bold]
+  12 -> 14 [label = 'No', fontsize=40, style=dashed]
+  14 -> 15 [style=bold]
+  15 -> 16 [style=bold]
+  16 -> 17 [style=bold]
+  17 -> 18 [style=bold]
   
 
   }")
