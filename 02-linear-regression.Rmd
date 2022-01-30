@@ -1,17 +1,103 @@
-# Linear Regression
+---
+title: "Linear Regression"
+author: "Sam Jasper and Jackson de Oliveira"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  bookdown::html_document2:
+    includes:
+      in_header: header.html
+  bookdown::gitbook:
+    includes:
+      in_header: header.html
+---
 
 
-```{r setup, echo=FALSE, warning=FALSE}
-library(DiagrammeR) 
-
+```{r setup, echo=FALSE, warning=FALSE, include=FALSE}
+library(DiagrammeR)
+# Add a common class name for every chunks
+knitr::opts_chunk$set(
+  echo = TRUE)
 ```
+```{r htmlTemp3, echo=FALSE, eval=TRUE}
+codejs <- readr::read_lines("js/codefolding.js")
+collapsejs <- readr::read_lines("js/collapse.js")
+transitionjs <- readr::read_lines("js/transition.js")
+dropdownjs <- readr::read_lines("js/dropdown.js")
+
+htmlhead <- c(
+  paste('
+<script>',
+paste(transitionjs, collapse = "\n"),
+'</script>
+<script>',
+paste(collapsejs, collapse = "\n"),
+'</script>
+<script>',
+paste(codejs, collapse = "\n"),
+'</script>
+<script>',
+paste(dropdownjs, collapse = "\n"),
+'</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+', sep = "\n"),
+  paste0('
+<script>
+document.write(\'<div class="btn-group pull-right" style="position: absolute; top: 20%; right: 2%; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>\')
+</script>
+')
+)
+
+readr::write_lines(htmlhead, path = "header.html")
+```
+
+# Linear Regression
 
 ```{r diagram, echo=FALSE, fig.height=14, fig.width=8}
 
 grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
-  node [shape = rectangle]        
+  node [shape = rectangle, fontsize=40]        
+  0 [label = 'START HERE!', color = 'aqua']
   1 [label = 'Build a linear model with all variables']
   H [label = 'Re-evaluate Variables 
   and/or Model Type']
@@ -31,7 +117,7 @@ grViz("digraph {
   18 [label = 'Summarize
   Findings']
   
-  node [shape = diamond]
+  node [shape = diamond, fontsize=40]
   2 [label = 'Is a global F-Test 
   significant?']
   3 [label = 'Test Assumptions: 
@@ -55,30 +141,31 @@ grViz("digraph {
 
   
   # edge definitions with the node IDs
+  0 -> 1
   1 -> 2
   H -> 1
-  2 -> H [label = 'No']
-  2 -> 3 [label = 'Yes']
-  3 -> 4 [label = 'Yes']
-  3 -> 6 [label = 'No']
-  6 -> H [label = 'Yes']
-  6 -> H [label = 'No']
-  4 -> 5 [label = 'Yes']
-  4 -> H [label = 'No']
-  5 -> 7 [label = 'No']
-  7 -> 8 [label = 'No']
-  8 -> H [label = 'No']
-  5 -> 9 [label = 'Normal']
-  7 -> 9 [label = 'Normal']
-  8 -> 9 [label = 'Normal']
-  9 -> 10 [label = 'No']
-  10 -> H [label = 'No']
-  9 -> 11 [label = 'Yes']
-  11 -> 12 [label = 'Yes']
-  12 -> 13 [label = 'Yes']
-  11 -> 14 [label = 'No']
+  2 -> H [label = 'No', fontsize=40]
+  2 -> 3 [label = 'Yes', fontsize=40]
+  3 -> 4 [label = 'Yes', fontsize=40]
+  3 -> 6 [label = 'No', fontsize=40]
+  6 -> H [label = 'Yes', fontsize=40]
+  6 -> H [label = 'No', fontsize=40]
+  4 -> 5 [label = 'Yes', fontsize=40]
+  4 -> H [label = 'No', fontsize=40]
+  5 -> 7 [label = 'No', fontsize=40]
+  7 -> 8 [label = 'No', fontsize=40]
+  8 -> H [label = 'No', fontsize=40]
+  5 -> 9 [label = 'Normal', fontsize=40]
+  7 -> 9 [label = 'Normal', fontsize=40]
+  8 -> 9 [label = 'Normal', fontsize=40]
+  9 -> 10 [label = 'No', fontsize=40]
+  10 -> H [label = 'No', fontsize=40]
+  9 -> 11 [label = 'Yes', fontsize=40]
+  11 -> 12 [label = 'Yes', fontsize=40]
+  12 -> 13 [label = 'Yes', fontsize=40]
+  11 -> 14 [label = 'No', fontsize=40]
   13 -> 14
-  12 -> 14 [label = 'No']
+  12 -> 14 [label = 'No', fontsize=40]
   14 -> 15
   15 -> 16
   16 -> 17
@@ -92,9 +179,9 @@ grViz("digraph {
 ## Select Alpha Level
 <span style="color:blue;"> *snippet fsr_alpha *</span>
 
-There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size. <THIS IS A TEST>
+There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.
 
-```{r diagram, results='hide'}
+```{r fsr_alpha_codeblock, eval=FALSE}
 #Determines alpha value based on sample size and BIC criterion
 alpha = 1-pchisq(log(nrow(dataset)),1)
 ```
@@ -107,7 +194,13 @@ Assuming you have a reasonable number of variables, start by putting them all in
 
 <span style="color:blue;"> *snippet fsr_globalF* </span>
 
-Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process. 
+Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.
+
+```{r fsr_globalF_codeblock, eval=FALSE}
+#Global F test: Determines if at least one variable is significant
+lm.model <- lm(targetvar ~ predvar1 + predvar2, data = dataset)
+summary(lm.model)
+```
 
 ## Assumptions
 
@@ -115,10 +208,19 @@ Next, you need to assess a number of assumptions that come with linear regressio
 
 ### Linearity
 
-<span style="color:blue;"> *snippet fsr_assumptions_independence* </span>
+<span style="color:blue;"> *snippet fsr_assumptions_linearity* </span>
 
 Check if they are linear (yes, keep moving)
-(No) If they look polynomial/ quadratic/ etc. reconsider higher order terms 
+(No) If they look polynomial/ quadratic/ etc. reconsider higher order terms
+
+```{r fsr_assumptions_linearity_codeblock, eval=FALSE}
+#Check to see if the below plot is random with an average value of zero
+library(ggplot2)
+lm.model=lm(targetvar~.,data=dataset)
+ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
+  geom_point(color="blue")+
+  labs(x="Predicted Values",y="Residuals")
+```
 
 
 ### Independent Random Errors
@@ -127,6 +229,19 @@ Check if they are linear (yes, keep moving)
 
 Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test. 
 
+```{r fsr_assumptions_independence_codeblock, eval=FALSE}
+#Can use plot to visually see time-dependence or use Durbin-Watson test
+library(ggplot2)
+library(lmtest)
+lm.model=lm(targetvar~.,data=dataset)
+
+ggplot(train,aes(x=timevariable,y=lm.model$residuals)) +  #i. Visual Plot
+  geom_point(color="blue") +
+  labs( x="Time",y="Residuals")
+
+lm.model=lm(targetvar~timevariable,data=dataset)
+dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
+```
 
 ### Random Error Constant Variance
 
@@ -134,6 +249,14 @@ Next check is the errors are independent by inspecting if the residuals show a p
 
 Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
 
+```{r fsr_assumptions_constvar_codeblock, eval=FALSE}
+#Check to see if the below plot has a constant spread over the range of predicted values
+library(ggplot2)
+lm.model=lm(targetvar~.,data=dataset)
+ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
+  geom_point(color="blue") +
+  labs(x="Predicted Values",y="Residuals")
+```
 
 ### Random Errors Normally Distributed
 
@@ -141,6 +264,20 @@ Then you need to further inspect the residuals by looking for patterns. If the r
 
 Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x's. 
 
+```{r fsr_assumptions_normdist_codeblock, eval=FALSE}
+#Check to see if the below plot has a constant spread over the range of predicted values
+#Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test
+library(ggplot2)
+library(nortest)
+lm.model=lm(targetvar~.,data=dataset)
+
+ggplot(data = dataset, aes(sample = lm.model$residuals)) + #i. QQ-Plot
+  stat_qq() +
+  stat_qq_line()
+  
+ad.test(lm.model$residuals) #ii. Anderson-Darling test. Gives more weight to tails
+shapiro.test(lm.model$residuals) #iii. Shapiro-Wilk test. Better for smaller data sets
+```
 
 ### Single Predictor?
 
@@ -152,7 +289,19 @@ The final assumption to check is multicollinearity. If you only have 1 predictor
 
 <span style="color:blue;"> *snippet fsr_assumptions_multicol *</span>
 
-If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers. 
+If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.
+
+```{r fsr_assumptions_multicol_codeblock, eval=FALSE}
+#Check for correlation among predictor variables or calculate the variance inflation factor (VIF)
+library(car)
+
+#First filter dataframe to only contain numeric variables
+dataset_num = dataset[,c(5,6,82)]
+cor(dataset_num) #i. Correlation among predictor variables
+
+lm.model=lm(targetvar~.,data=dataset)
+vif(lm.model) #ii. Variance inflation factor (VIF)
+```
 
 ## Influential Observations / Outliers
 
@@ -163,16 +312,60 @@ Once all of the assumptions are met, consider handling influential observations 
 <span style="color:blue;"> *snippet fsr_influential*</span>
 
 * Internally Studentized residuals (good for detecting outliers) 
-
 * Externally Studentized residuals (good for detecting outliers)
-
 * Cook's D (good for detecting influential observations)
-
 * DFFITS (good for detecting influential observations)
-
 * DFBETAS (good for detecting influential observations) 
+* Hat values (good for detecting influential observations)
 
-* Hat values (good for detecting influential observations) 
+```{r fsr_influential_codeblock, eval=FALSE}
+#Tests for finding influential observations
+library(ggplot2)
+library(pdp)
+lm.model=lm(targetvar~.,data=dataset)
+n.index = seq(1, nrow(dataset))
+p = length(lm.model$coefficients)
+
+#i. Cook's D
+D.cut= 4/(nrow(dataset)-p-1)
+
+c = ggplot(lm.model,aes(x=n.index,y=cooks.distance(lm.model))) +
+      geom_point(color="orange") +
+      geom_line(y=D.cut) +
+      labs(title = "Cook's D",x = "Observation",y ="Cook's Distance")
+
+#ii. DFFITS
+df.cut=2*(sqrt((p)/nrow(dataset)))
+
+d = ggplot(lm.model,aes(x=n.index,y=dffits(lm.model))) +
+      geom_point(color="orange") +
+      geom_line(y=df.cut) +
+      geom_line(y=-df.cut) +
+      labs(title = "DFFITS",x="Observation",y="DFFITS")
+
+#Observations that are outside of dffits
+dataset[dffits(lm.model) > df.cut | dffits(lm.model) < -df.cut,]
+
+#iii. DFBETAS (copy and paste for each variable)
+db.cut=2/sqrt(nrow(dataset))
+
+e = ggplot(lm.model,aes(x=n.index,y=dfbetas(lm.model)[,'variablename'])) + 
+      geom_point(color="orange") + 
+      geom_line(y=db.cut) + 
+      geom_line(y=-db.cut) + 
+      labs(title = "DFBETA for variablename",x="Observation",y="DFBETAS")
+
+#iv. Hhat
+hat.cut=2*(p+1)/nrow(dataset)
+
+f = ggplot(lm.model,aes(x=n.index,y=hatvalues(lm.model))) +
+      geom_point(color="orange") +
+      geom_line(y=hat.cut) +
+      labs(title = "Hat values",x="Observation",y="Hat Values")
+
+#Print all plots in a grid. Add additional variables for DFBETAS if desired
+grid.arrange(c,d,e,f)
+```
   
 ### Handle Influential Observations 
 
@@ -186,13 +379,73 @@ Once all of the assumptions are met, consider handling influential observations 
     + Nonlinear model 
 3. Determine the robustness of the inference bv running the analysis both with and without the influential observations. 
 4. Robust Regression (Covered Later in Program) 
-5. Weighted Least Squares (WCS) 
+5. Weighted Least Squares (WCS)
+
+```{r fsr_outliers_codeblock, eval=FALSE}
+#Tests for finding outliers
+library(ggplot2)
+library(pdp)
+lm.model=lm(targetvar~.,data=dataset)
+n.index = seq(1, nrow(dataset))
+
+#i. Internal Studentized Residuals
+a = ggplot(lm.model,aes(x=n.index,y=rstandard(lm.model))) + 
+  geom_point(color="orange") + 
+  geom_line(y=-3) + 
+  geom_line(y=3) + 
+  labs(title = "Internal Studentized Residuals",x="Observation",y="Residuals")
+
+#ii. External Studentized Residuals
+b = ggplot(lm.model,aes(x=n.index,y=rstudent(lm.model)))+ 
+  geom_point(color="orange") + 
+  geom_line(y=-3) + 
+  geom_line(y=3) + 
+  labs(title = "External Studentized Residuals",x="Observation",y="Residuals")
+
+grid.arrange(a,b)
+```
 
 ## Variable Selection
 
 <span style="color:blue;"> *snippet fsr_varselect_linreg*</span>
 
-When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value. 
+When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.
+
+```{r fsr_varselect_linreg_codeblock, eval=FALSE}
+#Create training model
+library(dplyr)
+library(glmnet)
+set.seed(19054)
+
+dataframe <- dataframe %>% mutate(id = row_number()) #Only necessary if data does not have id-like column
+train = dataframe %>% sample_frac(0.7) #70% of data points are set aside for training (can be changed)
+test <- anti_join(dataframe, train, by = 'id') #The remainder are assigned for testing
+train = train[,c(colnumstovalidate)] #Select columns you want to analyze
+#train = train[,!(colnames(train) %in% "id")] #Remove id column if not used in modeling
+
+# Create full model and empty model
+full.model = lm(yvar ~ . , data = train)
+empty.model = lm(yvar ~ 1, data = train)
+
+# Information Criteria (InfCrit)
+#AIC: k = 2
+#BIC: k = log(nrow(train))
+#p-value: k = qchisq(alpha.f , 1, lower.tail = FALSE)
+
+#Create model
+#alpha.f=0.20 #Only needed for p-value calculation
+
+for.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "forward", k = InfCrit)
+back.model = step(full.model, scope = list(lower = empty.model, upper = full.model), direction = "backward", k = InfCrit)
+step.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "both", k = InfCrit)
+
+#Regularized regression for variable selection (LASSO example)
+train_x <- model.matrix(yvar ~ ., data = train)[, -1]
+train_y <- train$'yvar'
+
+train_lasso = glmnet(x=train_x, y = yvar, alpha = 1)
+plot(train_lasso, xvar = "lambda")
+```
 
 ## Model Evaluation
 
@@ -200,6 +453,24 @@ When the data is postured and ready for analysis, start with variable selection.
 
 After the variables are selected, it's time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics. 
 
+```{r fsr_modeval_codeblock, eval=FALSE}
+#Evaluate various metrics for model accuracy
+library(dplyr)
+
+testdataset$pred_lm <- predict(finalmodel, newdata = testdataset)
+
+testdataset %>% 
+  mutate(lm_APE = 100*abs((yvar - pred_lm)/yvar)) %>% 
+  mutate(lm_AE = abs(yvar - pred_lm)) %>% 
+  mutate(lm_SE = (yvar - pred_lm)^2) %>% 
+  dplyr::summarise(MAPE_lm = mean(lm_APE)
+                            , MAE_lm = mean(lm_AE)
+                            , MSE_lm = mean(lm_SE)
+                            , RMSE_lm = sqrt(mean(lm_SE))
+                            , AIC_lm = AIC(finalmodel)
+                            , BIC_lm = BIC(finalmodel)
+                            , Ra2_lm = summary(finalmodel)$adj.r.squared)
+```
 
 ## Summarize Findings
 
