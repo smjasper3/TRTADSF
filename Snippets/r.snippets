@@ -1,0 +1,306 @@
+snippet lib
+	library(${1:package})
+
+snippet req
+	require(${1:package})
+
+snippet src
+	source("${1:file.R}")
+
+snippet ret
+	return(${1:code})
+
+snippet mat
+	matrix(${1:data}, nrow = ${2:rows}, ncol = ${3:cols})
+
+snippet sg
+	setGeneric("${1:generic}", function(${2:x, ...}) {
+		standardGeneric("${1:generic}")
+	})
+
+snippet sm
+	setMethod("${1:generic}", ${2:class}, function(${2:x, ...}) {
+		${0}
+	})
+
+snippet sc
+	setClass("${1:Class}", slots = c(${2:name = "type"}))
+
+snippet if
+	if (${1:condition}) {
+		${0}
+	}
+
+snippet el
+	else {
+		${0}
+	}
+
+snippet ei
+	else if (${1:condition}) {
+		${0}
+	}
+
+snippet fun
+	${1:name} <- function(${2:variables}) {
+		${0}
+	}
+
+snippet for
+	for (${1:variable} in ${2:vector}) {
+		${0}
+	}
+
+snippet while
+	while (${1:condition}) {
+		${0}
+	}
+
+snippet switch
+	switch (${1:object},
+		${2:case} = ${3:action}
+	)
+
+snippet apply
+	apply(${1:array}, ${2:margin}, ${3:...})
+
+snippet lapply
+	lapply(${1:list}, ${2:function})
+
+snippet sapply
+	sapply(${1:list}, ${2:function})
+
+snippet mapply
+	mapply(${1:function}, ${2:...})
+
+snippet tapply
+	tapply(${1:vector}, ${2:index}, ${3:function})
+
+snippet vapply
+	vapply(${1:list}, ${2:function}, FUN.VALUE = ${3:type}, ${4:...})
+
+snippet rapply
+	rapply(${1:list}, ${2:function})
+
+snippet ts
+	`r paste("#", date(), "------------------------------\n")`
+
+snippet shinyapp
+	library(shiny)
+	
+	ui <- fluidPage(
+	  ${0}
+	)
+	
+	server <- function(input, output, session) {
+	  
+	}
+	
+	shinyApp(ui, server)
+
+snippet shinymod
+	${1:name}_UI <- function(id) {
+	  ns <- NS(id)
+	  tagList(
+		${0}
+	  )
+	}
+	
+	${1:name} <- function(input, output, session) {
+	  
+	}
+
+################################
+#Flowsheet Resource Snippets
+################################
+
+snippet fsr_alpha
+	#Determines alpha value based on sample size and BIC criterion
+	alpha = 1-pchisq(log(nrow(${1:dataset})),1)
+
+snippet fsr_globalF
+	#Global F test: Determines if at least one variable is significant
+	lm.model <- lm(${1:targetvar} ~ ${2:predvar1} + ${3:predvar2}, data = ${4:dataset})
+	summary(lm.model)
+
+snippet fsr_assumptions_linearity
+	#Check to see if the below plot is random with an average value of zero
+	library(ggplot2)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
+		geom_point(color="blue")+
+		labs(x="Predicted Values",y="Residuals")
+
+snippet fsr_assumptions_constvar 
+	#Check to see if the below plot has a constant spread over the range of predicted values
+	library(ggplot2)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
+		geom_point(color="blue") +
+		labs(x="Predicted Values",y="Residuals")
+
+
+snippet fsr_assumptions_normdist
+	#Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test
+	library(ggplot2)
+	library(nortest)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	
+	ggplot(data = ${2:dataset}, aes(sample = lm.model\$residuals)) + #i. QQ-Plot
+		stat_qq() +
+		stat_qq_line()
+	
+	ad.test(lm.model\$residuals) #ii. Anderson-Darling test. Gives more weight to tails
+	shapiro.test(lm.model\$residuals) #iii. Shapiro-Wilk test. Better for smaller data sets
+
+
+snippet fsr_assumptions_independence
+	#Can use plot to visually see time-dependence or use Durbin-Watson test
+	library(ggplot2)
+	library(lmtest)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	
+	ggplot(train,aes(x=${3:timevariable},y=lm.model\$residuals)) +	#i. Visual Plot
+		geom_point(color="blue") +
+		labs( x="Time",y="Residuals")
+	
+	lm.model=lm(${1:targetvar}~${3:timevariable},data=${2:dataset})
+	dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
+
+
+snippet fsr_assumptions_multicol
+	#Check for correlation among predictor variables or calculate the variance inflation factor (VIF)
+	library(car)
+	
+	#First filter dataframe to only contain numeric variables
+	${1:dataset}_num = ${1:dataset}[,c(5,6,82)]
+	cor(${1:dataset}_num) #i. Correlation among predictor variables
+	
+	lm.model=lm(${2:targetvar}~.,data=${1:dataset})
+	vif(lm.model) #ii. Variance inflation factor (VIF)
+
+
+snippet fsr_outliers
+	#Tests for finding outliers
+	library(ggplot2)
+	library(pdp)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	n.index = seq(1, nrow(${2:dataset}))
+	
+	#i. Internal Studentized Residuals
+	a = ggplot(lm.model,aes(x=n.index,y=rstandard(lm.model))) + 
+		geom_point(color="orange") + 
+		geom_line(y=-3) + 
+		geom_line(y=3) + 
+		labs(title = "Internal Studentized Residuals",x="Observation",y="Residuals")
+	
+	#ii. External Studentized Residuals
+	b = ggplot(lm.model,aes(x=n.index,y=rstudent(lm.model)))+ 
+		geom_point(color="orange") + 
+		geom_line(y=-3) + 
+		geom_line(y=3) + 
+		labs(title = "External Studentized Residuals",x="Observation",y="Residuals")
+	
+	grid.arrange(a,b)
+
+
+snippet fsr_influential
+	#Tests for finding influential observations
+	library(ggplot2)
+	library(pdp)
+	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
+	n.index = seq(1, nrow(${2:dataset}))
+	p = length(lm.model\$coefficients)
+	
+	#i. Cook's D
+	D.cut= 4/(nrow(${2:dataset})-p-1)
+	
+	c = ggplot(lm.model,aes(x=n.index,y=cooks.distance(lm.model))) +
+		geom_point(color="orange") +
+		geom_line(y=D.cut) +
+		labs(title = "Cook's D",x = "Observation",y ="Cook's Distance")
+	
+	#ii. DFFITS
+	df.cut=2*(sqrt((p)/nrow(${2:dataset})))
+	
+	d = ggplot(lm.model,aes(x=n.index,y=dffits(lm.model))) +
+		geom_point(color="orange") +
+		geom_line(y=df.cut) +
+		geom_line(y=-df.cut) +
+		labs(title = "DFFITS",x="Observation",y="DFFITS")
+	
+	#Observations that are outside of dffits
+	${2:dataset}[dffits(lm.model) > df.cut | dffits(lm.model) < -df.cut,]
+	
+	#iii. DFBETAS (copy and paste for each variable)
+	db.cut=2/sqrt(nrow(${2:dataset}))
+	
+	e = ggplot(lm.model,aes(x=n.index,y=dfbetas(lm.model)[,'${3:variablename}'])) + 
+		geom_point(color="orange") + 
+		geom_line(y=db.cut) + 
+		geom_line(y=-db.cut) + 
+		labs(title = "DFBETA for ${3:variablename}",x="Observation",y="DFBETAS")
+	
+	#iv. Hhat
+	hat.cut=2*(p+1)/nrow(${2:dataset})
+	
+	f = ggplot(lm.model,aes(x=n.index,y=hatvalues(lm.model))) +
+		geom_point(color="orange") +
+		geom_line(y=hat.cut) +
+		labs(title = "Hat values",x="Observation",y="Hat Values")
+	
+	#Print all plots in a grid. Add additional variables for DFBETAS if desired
+	grid.arrange(c,d,e,f)
+
+snippet fsr_varselect_linreg
+	#Create training model
+	library(dplyr)
+	library(glmnet)
+	set.seed(19054)
+	
+	${1:dataframe} <- ${1:dataframe} %>% mutate(id = row_number()) #Only necessary if data does not have id-like column
+	train = ${1:dataframe} %>% sample_frac(0.7) #70% of data points are set aside for training (can be changed)
+	test <- anti_join(${1:dataframe}, train, by = 'id') #The remainder are assigned for testing
+	train = train[,c(${2:colnumstovalidate})] #Select columns you want to analyze
+	#train = train[,!(colnames(train) %in% "id")] #Remove id column if not used in modeling
+	
+	# Create full model and empty model
+	full.model = lm(${3:yvar} ~ . , data = train)
+	empty.model = lm(${3:yvar} ~ 1, data = train)
+	
+	# Information Criteria (InfCrit)
+	#AIC: k = 2
+	#BIC: k = log(nrow(train))
+	#p-value: k = qchisq(alpha.f , 1, lower.tail = FALSE)
+	
+	#Create model
+	#alpha.f=0.20 #Only needed for p-value calculation
+	
+	for.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "forward", k = ${5:InfCrit})
+	back.model = step(full.model, scope = list(lower = empty.model, upper = full.model), direction = "backward", k = ${5:InfCrit})
+	step.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "both", k = ${5:InfCrit})
+	
+	#Regularized regression for variable selection (LASSO example)
+	train_x <- model.matrix(${3:yvar} ~ ., data = train)[, -1]
+	train_y <- train\$'${3:yvar}'
+	
+	train_lasso = glmnet(x=train_x, y = ${3:yvar}, alpha = 1)
+	plot(train_lasso, xvar = "lambda")
+
+snippet fsr_modeval
+	#Evaluate various metrics for model accuracy
+	library(dplyr)
+	
+	${1:testdataset}\$pred_lm <- predict(${2:finalmodel}, newdata = ${1:testdataset})
+	
+	${1:testdataset} %>% 
+		mutate(lm_APE = 100*abs((${3:yvar} - pred_lm)/${3:yvar})) %>% 
+		mutate(lm_AE = abs(${3:yvar} - pred_lm)) %>% 
+		mutate(lm_SE = (${3:yvar} - pred_lm)^2) %>% 
+		dplyr::summarise(MAPE_lm = mean(lm_APE)
+										 , MAE_lm = mean(lm_AE)
+										 , MSE_lm = mean(lm_SE)
+										 , RMSE_lm = sqrt(mean(lm_SE))
+										 , AIC_lm = AIC(${2:finalmodel})
+										 , BIC_lm = BIC(${2:finalmodel})
+										 , Ra2_lm = summary(${2:finalmodel})\$adj.r.squared)
