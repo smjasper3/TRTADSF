@@ -97,8 +97,8 @@ grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
   node [shape = rectangle, fontsize=40, style=filled, color=lightblue1]
-  0 [label = 'START HERE!', color = cornflowerblue, style=filled]
-  1 [label = 'Build a linear model with all variables']
+  0 [label = 'START HERE!', color = cornflowerblue, style=filled, URL='#select-alpha-level']
+  1 [label = 'Build a linear model with all variables', URL='create-linear-model-of-all-variables']
   H [label = 'Re-evaluate Variables 
   and/or Model Type']
   10 [label = '1. WLS/IRLS
@@ -119,21 +119,21 @@ grViz("digraph {
   
   node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]
   2 [label = 'Is a global F-Test 
-  significant?']
+  significant?', URL='#global-f-test']
   3 [label = 'Test Assumptions: 
-  Linearity of the mean']
+  Linearity of the mean', URL='#linearity']
   6 [label = 'Residuals Polynomial?
   Use Higher Order']
   4 [label = 'Test Assumptions: 
-  Independent Random Errors']
+  Independent Random Errors', URL='#independent-random-errors']
   5 [label = 'Test Assumptions:
-  Normality']
+  Normality', URL='#random-errors-normally-distributed']
   7 [label = 'Box Cox 
   Transform']
   8 [label = 'Transform 
   X-Values']
   9 [label = 'Test Assumptions: 
-  Equal Variance']
+  Equal Variance', URL='#random-error-constant-variance']
   11 [label = 'Multiple 
   X-Vars?']
   12 [label = 'Any VIF 
