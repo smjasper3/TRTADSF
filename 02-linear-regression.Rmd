@@ -243,21 +243,6 @@ lm.model=lm(targetvar~timevariable,data=dataset)
 dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
 ```
 
-### Random Error Constant Variance
-
-<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span>
-
-Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
-
-```{r fsr_assumptions_constvar_codeblock, eval=FALSE}
-#Check to see if the below plot has a constant spread over the range of predicted values
-library(ggplot2)
-lm.model=lm(targetvar~.,data=dataset)
-ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
-  geom_point(color="blue") +
-  labs(x="Predicted Values",y="Residuals")
-```
-
 ### Random Errors Normally Distributed
 
 <span style="color:blue;"> *snippet fsr_assumptions_normdist *</span>
@@ -278,6 +263,23 @@ ggplot(data = dataset, aes(sample = lm.model$residuals)) + #i. QQ-Plot
 ad.test(lm.model$residuals) #ii. Anderson-Darling test. Gives more weight to tails
 shapiro.test(lm.model$residuals) #iii. Shapiro-Wilk test. Better for smaller data sets
 ```
+
+
+### Random Error Constant Variance
+
+<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span>
+
+Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
+
+```{r fsr_assumptions_constvar_codeblock, eval=FALSE}
+#Check to see if the below plot has a constant spread over the range of predicted values
+library(ggplot2)
+lm.model=lm(targetvar~.,data=dataset)
+ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
+  geom_point(color="blue") +
+  labs(x="Predicted Values",y="Residuals")
+```
+
 
 ### Single Predictor?
 
