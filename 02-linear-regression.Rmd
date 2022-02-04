@@ -119,7 +119,7 @@ grViz("digraph {
   
   node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]
   2 [label = 'Is a global F-Test 
-  significant?', URL='#global-f-test']
+  significant?', URL='#global-f-test', fontcolor='blue']
   3 [label = 'Test Assumptions: 
   Linearity of the mean', URL='#linearity']
   6 [label = 'Residuals Polynomial?
