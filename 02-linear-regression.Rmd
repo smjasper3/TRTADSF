@@ -107,15 +107,15 @@ grViz("digraph {
   13 [label = 'Remove Var(s) or 
   Create new transformed vars']
   14 [label = 'Handle Influential 
-  Observations']
-  15 [label = 'Choose Model Evaluation
+  Observations', URL='#assumptions', fontcolor='blue']
+  15 [label = 'Select Variable Evaluation
   Statistic']
   16 [label = 'Select Variable 
-  Selection Technique']
+  Selection Technique', URL='#variable-selection', fontcolor='blue']
   17 [label = 'Select Model 
-  Evaluation Statistic']
+  Evaluation Statistic', URL='#model-evaluation', fontcolor='blue']
   18 [label = 'Summarize
-  Findings']
+  Findings', URL='#summarize-findings', fontcolor='blue']
   
   node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]
   2 [label = 'Is a global F-Test 
