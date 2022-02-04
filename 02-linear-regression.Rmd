@@ -107,7 +107,7 @@ grViz("digraph {
   13 [label = 'Remove Var(s) or 
   Create new transformed vars']
   14 [label = 'Handle Influential 
-  Observations', URL='#assumptions', fontcolor='blue']
+  Observations', URL='#influential-observations-outliers', fontcolor='blue']
   15 [label = 'Select Variable Evaluation
   Statistic']
   16 [label = 'Select Variable 

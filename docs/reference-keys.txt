@@ -34,3 +34,4 @@ summarize-findings
 statistics-that-help-identify-influential-observations-are-the-following
 handle-influential-observations
 identify-influential-observations
+handle-outliers
