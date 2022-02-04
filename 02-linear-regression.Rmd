@@ -98,7 +98,7 @@ grViz("digraph {
   
   node [shape = rectangle, fontsize=40, style=filled, color=lightblue1]
   0 [label = 'START HERE!', color = cornflowerblue, style=filled, URL='#select-alpha-level']
-  1 [label = 'Build a linear model with all variables', URL='create-linear-model-of-all-variables']
+  1 [label = 'Build a linear model with all variables', URL='#create-linear-model-of-all-variables']
   H [label = 'Re-evaluate Variables 
   and/or Model Type']
   10 [label = '1. WLS/IRLS
