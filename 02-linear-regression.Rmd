@@ -133,11 +133,11 @@ grViz("digraph {
   8 [label = 'Transform 
   X-Values']
   9 [label = 'Test Assumptions: 
-  Equal Variance', URL='#random-error-constant-variance', fontcolor='blue']
+  Constant Variance', URL='#random-error-constant-variance', fontcolor='blue']
   11 [label = 'Multiple 
-  X-Vars?']
+  X-Vars?', URL='#single-predictor', fontcolor='blue']
   12 [label = 'Any VIF 
-  > 10?']
+  > 10?', URL='#check-for-multicollinearity', fontcolor='blue']
 
   
   # edge definitions with the node IDs
@@ -367,7 +367,7 @@ f = ggplot(lm.model,aes(x=n.index,y=hatvalues(lm.model))) +
 grid.arrange(c,d,e,f)
 ```
   
-### Handle Influential Observations 
+### Handle Outliers
 
 <span style="color:blue;"> *snippet fsr_outliers*</span>
 
