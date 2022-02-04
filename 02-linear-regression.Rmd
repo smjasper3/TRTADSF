@@ -96,8 +96,8 @@ readr::write_lines(htmlhead, path = "header.html")
 grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
-  node [shape = rectangle, fontsize=40, style=filled, color=lightblue1]
-  0 [label = 'START HERE!', color = cornflowerblue, style=filled, URL='#select-alpha-level', fontcolor='blue']
+  node [shape = rectangle, fontsize=40, style=filled, color='lightblue1']
+  0 [label = 'START HERE!', color='chocolate1', style=filled, URL='#select-alpha-level', fontcolor='blue']
   1 [label = 'Build a linear model with all variables', URL='#create-linear-model-of-all-variables', fontcolor='blue']
   H [label = 'Re-evaluate Variables 
   and/or Model Type']
