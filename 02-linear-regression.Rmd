@@ -9,6 +9,7 @@ output:
   bookdown::gitbook:
     includes:
       in_header: header.html
+      
 ---
 
 
@@ -17,6 +18,9 @@ library(DiagrammeR)
 # Add a common class name for every chunks
 knitr::opts_chunk$set(
   echo = TRUE)
+
+# RTFButton = grViz("digraph {0 [label = 'START HERE!', color='chocolate1', style=filled, URL='#select-alpha-level', fontcolor='blue']}")
+
 ```
 ```{r htmlTemp3, echo=FALSE, eval=TRUE}
 codejs <- readr::read_lines("js/codefolding.js")
@@ -177,7 +181,7 @@ grViz("digraph {
 ```
 
 ## Select Alpha Level
-<span style="color:blue;"> *snippet fsr_alpha *</span>
+<span style="color:blue;"> *snippet fsr_alpha *</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.
 
@@ -187,12 +191,13 @@ alpha = 1-pchisq(log(nrow(dataset)),1)
 ```
 
 ## Create Linear Model of All Variables
+[Back to Flowchart](#linear-regression){style="float:right"}
 
 Assuming you have a reasonable number of variables, start by putting them all into a model to predict the target. Variable selection/ reduction will occur later in the process. If you have a large number of variables, you can consider variable reduction or a different analytical technique.
 
 ## Global F-Test
 
-<span style="color:blue;"> *snippet fsr_globalF* </span>
+<span style="color:blue;"> *snippet fsr_globalF* </span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.
 
@@ -203,12 +208,12 @@ summary(lm.model)
 ```
 
 ## Assumptions
-
+[Back to Flowchart](#linear-regression){style="float:right"}
 Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms. 
 
 ### Linearity
 
-<span style="color:blue;"> *snippet fsr_assumptions_linearity* </span>
+<span style="color:blue;"> *snippet fsr_assumptions_linearity* </span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 Check if they are linear (yes, keep moving)
 (No) If they look polynomial/ quadratic/ etc. reconsider higher order terms
@@ -225,7 +230,7 @@ ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
 
 ### Independent Random Errors
 
-<span style="color:blue;"> *snippet fsr_assumptions_independence *</span>
+<span style="color:blue;"> *snippet fsr_assumptions_independence *</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test. 
 
@@ -245,7 +250,7 @@ dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
 
 ### Random Errors Normally Distributed
 
-<span style="color:blue;"> *snippet fsr_assumptions_normdist *</span>
+<span style="color:blue;"> *snippet fsr_assumptions_normdist *</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x's. 
 
@@ -267,7 +272,7 @@ shapiro.test(lm.model$residuals) #iii. Shapiro-Wilk test. Better for smaller dat
 
 ### Random Error Constant Variance
 
-<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span>
+<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
 
@@ -282,14 +287,14 @@ ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
 
 
 ### Single Predictor?
-
+[Back to Flowchart](#linear-regression){style="float:right"}
 The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step. 
 
 
 ### Multiple Predictors
 #### Check for Multicollinearity
 
-<span style="color:blue;"> *snippet fsr_assumptions_multicol *</span>
+<span style="color:blue;"> *snippet fsr_assumptions_multicol *</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.
 
@@ -306,12 +311,12 @@ vif(lm.model) #ii. Variance inflation factor (VIF)
 ```
 
 ## Influential Observations / Outliers
-
+[Back to Flowchart](#linear-regression){style="float:right"}
 Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected. 
 
 ### Identify influential observations 
 
-<span style="color:blue;"> *snippet fsr_influential*</span>
+<span style="color:blue;"> *snippet fsr_influential*</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 * Internally Studentized residuals (good for detecting outliers) 
 * Externally Studentized residuals (good for detecting outliers)
@@ -371,7 +376,7 @@ grid.arrange(c,d,e,f)
   
 ### Handle Outliers
 
-<span style="color:blue;"> *snippet fsr_outliers*</span>
+<span style="color:blue;"> *snippet fsr_outliers*</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 1. Recheck the data to ensure that no transcription or data entry errors 
   occurred. 
@@ -409,7 +414,7 @@ grid.arrange(a,b)
 
 ## Variable Selection
 
-<span style="color:blue;"> *snippet fsr_varselect_linreg*</span>
+<span style="color:blue;"> *snippet fsr_varselect_linreg*</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.
 
@@ -451,7 +456,7 @@ plot(train_lasso, xvar = "lambda")
 
 ## Model Evaluation
 
-<span style="color:blue;"> *snippet fsr_modeval*</span>
+<span style="color:blue;"> *snippet fsr_modeval*</span> [Back to Flowchart](#linear-regression){style="float:right"}
 
 After the variables are selected, it's time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics. 
 
@@ -475,7 +480,7 @@ testdataset %>%
 ```
 
 ## Summarize Findings
-
+[Back to Flowchart](#linear-regression){style="float:right"}
 With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context. 
 
 
