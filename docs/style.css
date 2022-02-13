@@ -12,3 +12,18 @@ pre {
 pre code {
   white-space: inherit;
 }
+
+#backToTop {
+	position: absolute;
+	bottom: 2em;
+	float: right;
+	left: 90.25%;
+	max-width: 4em;
+	width: 100%;
+	font-size: 1em;
+	border-color: rgba(85, 85, 85, 0.2);
+	background-color: rgb(100,100,100);
+	padding: .5px;
+	border-radius: 4px;
+	z-index: 9999;
+}
