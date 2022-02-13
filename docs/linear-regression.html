@@ -55,7 +55,7 @@
 <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
 <script src="libs/viz-1.8.2/viz.js"></script>
 <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
-<script src="libs/grViz-binding-1.0.7/grViz.js"></script>
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 
       <script>
 /* ========================================================================
@@ -749,23 +749,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="linear-regression" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Linear Regression</h1>
-<div id="htmlwidget-fb0177240449cea62127" style="width:768px;height:1344px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fb0177240449cea62127">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle, fontsize=40, style=filled, color=\"lightblue1\"]\n  0 [label = \"START HERE!\", color=\"chocolate1\", style=filled, URL=\"#select-alpha-level\", fontcolor=\"blue\"]\n  1 [label = \"Build a linear model with all variables\", URL=\"#create-linear-model-of-all-variables\", fontcolor=\"blue\"]\n  H [label = \"Re-evaluate Variables \n  and/or Model Type\"]\n  10 [label = \"1. WLS/IRLS\n  2. Transform\n  3. Different Distribution\"]\n  13 [label = \"Remove Var(s) or \n  Create new transformed vars\"]\n  14 [label = \"Handle Influential \n  Observations\", URL=\"#influential-observations-outliers\", fontcolor=\"blue\"]\n  15 [label = \"Select Variable Evaluation\n  Statistic\"]\n  16 [label = \"Select Variable \n  Selection Technique\", URL=\"#variable-selection\", fontcolor=\"blue\"]\n  17 [label = \"Select Model \n  Evaluation Statistic\", URL=\"#model-evaluation\", fontcolor=\"blue\"]\n  18 [label = \"Summarize\n  Findings\", URL=\"#summarize-findings\", fontcolor=\"blue\"]\n  \n  node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]\n  2 [label = \"Is a global F-Test \n  significant?\", URL=\"#global-f-test\", fontcolor=\"blue\"]\n  3 [label = \"Test Assumptions: \n  Linearity of the mean\", URL=\"#linearity\", fontcolor=\"blue\"]\n  6 [label = \"Residuals Polynomial?\n  Use Higher Order\"]\n  4 [label = \"Test Assumptions: \n  Independent Random Errors\", URL=\"#independent-random-errors\", fontcolor=\"blue\"]\n  5 [label = \"Test Assumptions:\n  Normality\", URL=\"#random-errors-normally-distributed\", fontcolor=\"blue\"]\n  7 [label = \"Box Cox \n  Transform\"]\n  8 [label = \"Transform \n  X-Values\"]\n  9 [label = \"Test Assumptions: \n  Constant Variance\", URL=\"#random-error-constant-variance\", fontcolor=\"blue\"]\n  11 [label = \"Multiple \n  X-Vars?\", URL=\"#single-predictor\", fontcolor=\"blue\"]\n  12 [label = \"Any VIF \n  > 10?\", URL=\"#check-for-multicollinearity\", fontcolor=\"blue\"]\n\n  \n  # edge definitions with the node IDs\n  0 -> 1 [style=bold]\n  1 -> 2 [style=bold]\n  H -> 1 [style=bold]\n  2 -> H [label = \"No\", fontsize=40, style=dashed]\n  2 -> 3 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 4 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 6 [label = \"No\", fontsize=40, style=dashed]\n  6 -> H [label = \"Yes\", fontsize=40, style=bold]\n  6 -> H [label = \"No\", fontsize=40, style=dashed]\n  4 -> 5 [label = \"Yes\", fontsize=40, style=bold]\n  4 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 7 [label = \"No\", fontsize=40, style=dashed]\n  7 -> 8 [label = \"No\", fontsize=40, style=dashed]\n  8 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  7 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  8 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  9 -> 10 [label = \"No\", fontsize=40, style=dashed]\n  10 -> H [label = \"No\", fontsize=40, style=dashed]\n  9 -> 11 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 12 [label = \"Yes\", fontsize=40, style=bold]\n  12 -> 13 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  13 -> 14 [style=bold]\n  12 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  14 -> 15 [style=bold]\n  15 -> 16 [style=bold]\n  16 -> 17 [style=bold]\n  17 -> 18 [style=bold]\n  \n\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-bf30c01e190b3b6c8f28" style="width:768px;height:1344px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bf30c01e190b3b6c8f28">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle, fontsize=40, style=filled, color=\"lightblue1\"]\n  0 [label = \"START HERE!\", color=\"chocolate1\", style=filled, URL=\"#select-alpha-level\", fontcolor=\"blue\"]\n  1 [label = \"Build a linear model with all variables\", URL=\"#create-linear-model-of-all-variables\", fontcolor=\"blue\"]\n  H [label = \"Re-evaluate Variables \n  and/or Model Type\"]\n  10 [label = \"1. WLS/IRLS\n  2. Transform\n  3. Different Distribution\"]\n  13 [label = \"Remove Var(s) or \n  Create new transformed vars\"]\n  14 [label = \"Handle Influential \n  Observations\", URL=\"#influential-observations-outliers\", fontcolor=\"blue\"]\n  15 [label = \"Select Variable Evaluation\n  Statistic\"]\n  16 [label = \"Select Variable \n  Selection Technique\", URL=\"#variable-selection\", fontcolor=\"blue\"]\n  17 [label = \"Select Model \n  Evaluation Statistic\", URL=\"#model-evaluation\", fontcolor=\"blue\"]\n  18 [label = \"Summarize\n  Findings\", URL=\"#summarize-findings\", fontcolor=\"blue\"]\n  \n  node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]\n  2 [label = \"Is a global F-Test \n  significant?\", URL=\"#global-f-test\", fontcolor=\"blue\"]\n  3 [label = \"Test Assumptions: \n  Linearity of the mean\", URL=\"#linearity\", fontcolor=\"blue\"]\n  6 [label = \"Residuals Polynomial?\n  Use Higher Order\"]\n  4 [label = \"Test Assumptions: \n  Independent Random Errors\", URL=\"#independent-random-errors\", fontcolor=\"blue\"]\n  5 [label = \"Test Assumptions:\n  Normality\", URL=\"#random-errors-normally-distributed\", fontcolor=\"blue\"]\n  7 [label = \"Box Cox \n  Transform\"]\n  8 [label = \"Transform \n  X-Values\"]\n  9 [label = \"Test Assumptions: \n  Constant Variance\", URL=\"#random-error-constant-variance\", fontcolor=\"blue\"]\n  11 [label = \"Multiple \n  X-Vars?\", URL=\"#single-predictor\", fontcolor=\"blue\"]\n  12 [label = \"Any VIF \n  > 10?\", URL=\"#check-for-multicollinearity\", fontcolor=\"blue\"]\n\n  \n  # edge definitions with the node IDs\n  0 -> 1 [style=bold]\n  1 -> 2 [style=bold]\n  H -> 1 [style=bold]\n  2 -> H [label = \"No\", fontsize=40, style=dashed]\n  2 -> 3 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 4 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 6 [label = \"No\", fontsize=40, style=dashed]\n  6 -> H [label = \"Yes\", fontsize=40, style=bold]\n  6 -> H [label = \"No\", fontsize=40, style=dashed]\n  4 -> 5 [label = \"Yes\", fontsize=40, style=bold]\n  4 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 7 [label = \"No\", fontsize=40, style=dashed]\n  7 -> 8 [label = \"No\", fontsize=40, style=dashed]\n  8 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  7 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  8 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  9 -> 10 [label = \"No\", fontsize=40, style=dashed]\n  10 -> H [label = \"No\", fontsize=40, style=dashed]\n  9 -> 11 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 12 [label = \"Yes\", fontsize=40, style=bold]\n  12 -> 13 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  13 -> 14 [style=bold]\n  12 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  14 -> 15 [style=bold]\n  15 -> 16 [style=bold]\n  16 -> 17 [style=bold]\n  17 -> 18 [style=bold]\n  \n\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="select-alpha-level" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Select Alpha Level</h2>
-<p><span style="color:blue;"> <em>snippet fsr_alpha </em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_alpha </em></span></p>
 <p>There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="linear-regression.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Determines alpha value based on sample size and BIC criterion</span></span>
 <span id="cb1-2"><a href="linear-regression.html#cb1-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(<span class="fu">log</span>(<span class="fu">nrow</span>(dataset)),<span class="dv">1</span>)</span></code></pre></div>
 </div>
 <div id="create-linear-model-of-all-variables" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Create Linear Model of All Variables</h2>
-<p><a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
 <p>Assuming you have a reasonable number of variables, start by putting them all into a model to predict the target. Variable selection/ reduction will occur later in the process. If you have a large number of variables, you can consider variable reduction or a different analytical technique.</p>
 </div>
 <div id="global-f-test" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Global F-Test</h2>
-<p><span style="color:blue;"> <em>snippet fsr_globalF</em> </span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_globalF</em> </span></p>
 <p>Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="linear-regression.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Global F test: Determines if at least one variable is significant</span></span>
 <span id="cb2-2"><a href="linear-regression.html#cb2-2" aria-hidden="true" tabindex="-1"></a>lm.model <span class="ot">&lt;-</span> <span class="fu">lm</span>(targetvar <span class="sc">~</span> predvar1 <span class="sc">+</span> predvar2, <span class="at">data =</span> dataset)</span>
@@ -773,11 +772,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="assumptions" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Assumptions</h2>
-<p><a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a>
-Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms.</p>
+<p>Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms.</p>
 <div id="linearity" class="section level3" number="2.4.1">
 <h3><span class="header-section-number">2.4.1</span> Linearity</h3>
-<p><span style="color:blue;"> <em>snippet fsr_assumptions_linearity</em> </span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_assumptions_linearity</em> </span></p>
 <p>Check if they are linear (yes, keep moving)
 (No) If they look polynomial/ quadratic/ etc. reconsider higher order terms</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="linear-regression.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot is random with an average value of zero</span></span>
@@ -789,7 +787,7 @@ Next, you need to assess a number of assumptions that come with linear regressio
 </div>
 <div id="independent-random-errors" class="section level3" number="2.4.2">
 <h3><span class="header-section-number">2.4.2</span> Independent Random Errors</h3>
-<p><span style="color:blue;"> <em>snippet fsr_assumptions_independence </em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_assumptions_independence </em></span></p>
 <p>Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="linear-regression.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Can use plot to visually see time-dependence or use Durbin-Watson test</span></span>
 <span id="cb4-2"><a href="linear-regression.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -805,7 +803,7 @@ Next, you need to assess a number of assumptions that come with linear regressio
 </div>
 <div id="random-errors-normally-distributed" class="section level3" number="2.4.3">
 <h3><span class="header-section-number">2.4.3</span> Random Errors Normally Distributed</h3>
-<p><span style="color:blue;"> <em>snippet fsr_assumptions_normdist </em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_assumptions_normdist </em></span></p>
 <p>Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x’s.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="linear-regression.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot has a constant spread over the range of predicted values</span></span>
 <span id="cb5-2"><a href="linear-regression.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test</span></span>
@@ -822,7 +820,7 @@ Next, you need to assess a number of assumptions that come with linear regressio
 </div>
 <div id="random-error-constant-variance" class="section level3" number="2.4.4">
 <h3><span class="header-section-number">2.4.4</span> Random Error Constant Variance</h3>
-<p><span style="color:blue;"> <em>snippet fsr_assumptions_constvar </em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_assumptions_constvar </em></span></p>
 <p>Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it’s not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="linear-regression.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot has a constant spread over the range of predicted values</span></span>
 <span id="cb6-2"><a href="linear-regression.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -833,14 +831,13 @@ Next, you need to assess a number of assumptions that come with linear regressio
 </div>
 <div id="single-predictor" class="section level3" number="2.4.5">
 <h3><span class="header-section-number">2.4.5</span> Single Predictor?</h3>
-<p><a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a>
-The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step.</p>
+<p>The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step.</p>
 </div>
 <div id="multiple-predictors" class="section level3" number="2.4.6">
 <h3><span class="header-section-number">2.4.6</span> Multiple Predictors</h3>
 <div id="check-for-multicollinearity" class="section level4" number="2.4.6.1">
 <h4><span class="header-section-number">2.4.6.1</span> Check for Multicollinearity</h4>
-<p><span style="color:blue;"> <em>snippet fsr_assumptions_multicol </em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_assumptions_multicol </em></span></p>
 <p>If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="linear-regression.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check for correlation among predictor variables or calculate the variance inflation factor (VIF)</span></span>
 <span id="cb7-2"><a href="linear-regression.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
@@ -856,11 +853,10 @@ The final assumption to check is multicollinearity. If you only have 1 predictor
 </div>
 <div id="influential-observations-outliers" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Influential Observations / Outliers</h2>
-<p><a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a>
-Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected.</p>
+<p>Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected.</p>
 <div id="identify-influential-observations" class="section level3" number="2.5.1">
 <h3><span class="header-section-number">2.5.1</span> Identify influential observations</h3>
-<p><span style="color:blue;"> <em>snippet fsr_influential</em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_influential</em></span></p>
 <ul>
 <li>Internally Studentized residuals (good for detecting outliers)</li>
 <li>Externally Studentized residuals (good for detecting outliers)</li>
@@ -918,7 +914,7 @@ Once all of the assumptions are met, consider handling influential observations 
 </div>
 <div id="handle-outliers" class="section level3" number="2.5.2">
 <h3><span class="header-section-number">2.5.2</span> Handle Outliers</h3>
-<p><span style="color:blue;"> <em>snippet fsr_outliers</em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_outliers</em></span></p>
 <ol style="list-style-type: decimal">
 <li>Recheck the data to ensure that no transcription or data entry errors
 occurred.</li>
@@ -957,7 +953,7 @@ the model is not adequate.
 </div>
 <div id="variable-selection" class="section level2" number="2.6">
 <h2><span class="header-section-number">2.6</span> Variable Selection</h2>
-<p><span style="color:blue;"> <em>snippet fsr_varselect_linreg</em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_varselect_linreg</em></span></p>
 <p>When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you’re looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="linear-regression.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Create training model</span></span>
 <span id="cb10-2"><a href="linear-regression.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -995,7 +991,7 @@ the model is not adequate.
 </div>
 <div id="model-evaluation" class="section level2" number="2.7">
 <h2><span class="header-section-number">2.7</span> Model Evaluation</h2>
-<p><span style="color:blue;"> <em>snippet fsr_modeval</em></span> <a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a></p>
+<p><span style="color:blue;"> <em>snippet fsr_modeval</em></span></p>
 <p>After the variables are selected, it’s time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="linear-regression.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Evaluate various metrics for model accuracy</span></span>
 <span id="cb11-2"><a href="linear-regression.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -1016,8 +1012,7 @@ the model is not adequate.
 </div>
 <div id="summarize-findings" class="section level2" number="2.8">
 <h2><span class="header-section-number">2.8</span> Summarize Findings</h2>
-<p><a href="linear-regression.html#linear-regression" style="float:right">Back to Flowchart</a>
-With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context.</p>
+<p>With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context.</p>
 
 </div>
 </div>
