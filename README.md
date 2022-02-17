@@ -12,7 +12,7 @@ Have you ever thought through all the steps required for <insert data science co
 
 ## Installing / Getting started
 
-Fork or clone repository: (https://github.com/smjasper3/TRTADSF)
+Fork or clone repository: https://github.com/smjasper3/TRTADSF
 
 To access the RBookdown webpage, go to TRTADSF > docs > index.html
 
