@@ -1,6 +1,6 @@
 # To Rule Them All Data Science Flowchart (TRTADSF)
-The purpose of this project is to act as a resource to data scientists to help them be more efficient and effective at their jobs.
-The purpose is NOT to act as a substitute for or replacement of underlying knowledge of coding and statistical concepts.
+The purpose of this project is to function as a resource to data scientists to help them be more efficient and effective at their jobs.
+The purpose is NOT to function as a substitute for or replacement of underlying knowledge of coding and statistical concepts.
 
 Key features:
 * Flowchart of each data science concept
@@ -19,7 +19,7 @@ To access the RBookdown webpage, go to TRTADSF > docs > index.html
 
 ## Contributing
 
-We would love to have your contributions (large or small)! If you'd like to contribute, please fill out [this Google Form](https://forms.gle/wTQxZnxqTnHqDSxi9) to be added as a collaborator. This process may change once the repository becomes public.
+We would love to have your contributions (large or small)! If you would like to contribute, please fill out [this Google Form](https://forms.gle/wTQxZnxqTnHqDSxi9) to be added as a collaborator. This process may change once the repository becomes public.
 
 Use the *02-linear-regression.rmd* file as a template for future sections you create/edit.
 
