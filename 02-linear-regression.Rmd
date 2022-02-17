@@ -106,11 +106,11 @@ grViz("digraph {
 ```
 
 ## Select Alpha Level
-<span style="color:blue;"> *snippet fsr_alpha *</span> 
+<span style="color:blue;"> *snippet fdr_alpha *</span> 
 
 There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.
 
-```{r fsr_alpha_codeblock, eval=FALSE}
+```{r fdr_alpha_codeblock, eval=FALSE}
 #Determines alpha value based on sample size and BIC criterion
 alpha = 1-pchisq(log(nrow(dataset)),1)
 ```
@@ -122,11 +122,11 @@ Assuming you have a reasonable number of variables, start by putting them all in
 
 ## Global F-Test
 
-<span style="color:blue;"> *snippet fsr_globalF* </span> 
+<span style="color:blue;"> *snippet fdr_globalF* </span> 
 
 Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.
 
-```{r fsr_globalF_codeblock, eval=FALSE}
+```{r fdr_globalF_codeblock, eval=FALSE}
 #Global F test: Determines if at least one variable is significant
 lm.model <- lm(targetvar ~ predvar1 + predvar2, data = dataset)
 summary(lm.model)
@@ -138,12 +138,12 @@ Next, you need to assess a number of assumptions that come with linear regressio
 
 ### Linearity
 
-<span style="color:blue;"> *snippet fsr_assumptions_linearity* </span> 
+<span style="color:blue;"> *snippet fdr_assumptions_linearity* </span> 
 
 Check if they are linear (yes, keep moving)
 (No) If they look polynomial/ quadratic/ etc. reconsider higher order terms
 
-```{r fsr_assumptions_linearity_codeblock, eval=FALSE}
+```{r fdr_assumptions_linearity_codeblock, eval=FALSE}
 #Check to see if the below plot is random with an average value of zero
 library(ggplot2)
 lm.model=lm(targetvar~.,data=dataset)
@@ -155,11 +155,11 @@ ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
 
 ### Independent Random Errors
 
-<span style="color:blue;"> *snippet fsr_assumptions_independence *</span> 
+<span style="color:blue;"> *snippet fdr_assumptions_independence *</span> 
 
 Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test. 
 
-```{r fsr_assumptions_independence_codeblock, eval=FALSE}
+```{r fdr_assumptions_independence_codeblock, eval=FALSE}
 #Can use plot to visually see time-dependence or use Durbin-Watson test
 library(ggplot2)
 library(lmtest)
@@ -175,11 +175,11 @@ dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
 
 ### Random Errors Normally Distributed
 
-<span style="color:blue;"> *snippet fsr_assumptions_normdist *</span> 
+<span style="color:blue;"> *snippet fdr_assumptions_normdist *</span> 
 
 Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x's. 
 
-```{r fsr_assumptions_normdist_codeblock, eval=FALSE}
+```{r fdr_assumptions_normdist_codeblock, eval=FALSE}
 #Check to see if the below plot has a constant spread over the range of predicted values
 #Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test
 library(ggplot2)
@@ -197,11 +197,11 @@ shapiro.test(lm.model$residuals) #iii. Shapiro-Wilk test. Better for smaller dat
 
 ### Random Error Constant Variance
 
-<span style="color:blue;"> *snippet fsr_assumptions_constvar *</span> 
+<span style="color:blue;"> *snippet fdr_assumptions_constvar *</span> 
 
 Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
 
-```{r fsr_assumptions_constvar_codeblock, eval=FALSE}
+```{r fdr_assumptions_constvar_codeblock, eval=FALSE}
 #Check to see if the below plot has a constant spread over the range of predicted values
 library(ggplot2)
 lm.model=lm(targetvar~.,data=dataset)
@@ -219,11 +219,11 @@ The final assumption to check is multicollinearity. If you only have 1 predictor
 ### Multiple Predictors
 #### Check for Multicollinearity
 
-<span style="color:blue;"> *snippet fsr_assumptions_multicol *</span> 
+<span style="color:blue;"> *snippet fdr_assumptions_multicol *</span> 
 
 If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.
 
-```{r fsr_assumptions_multicol_codeblock, eval=FALSE}
+```{r fdr_assumptions_multicol_codeblock, eval=FALSE}
 #Check for correlation among predictor variables or calculate the variance inflation factor (VIF)
 library(car)
 
@@ -241,7 +241,7 @@ Once all of the assumptions are met, consider handling influential observations 
 
 ### Identify influential observations 
 
-<span style="color:blue;"> *snippet fsr_influential*</span> 
+<span style="color:blue;"> *snippet fdr_influential*</span> 
 
 * Internally Studentized residuals (good for detecting outliers) 
 * Externally Studentized residuals (good for detecting outliers)
@@ -250,7 +250,7 @@ Once all of the assumptions are met, consider handling influential observations 
 * DFBETAS (good for detecting influential observations) 
 * Hat values (good for detecting influential observations)
 
-```{r fsr_influential_codeblock, eval=FALSE}
+```{r fdr_influential_codeblock, eval=FALSE}
 #Tests for finding influential observations
 library(ggplot2)
 library(pdp)
@@ -301,7 +301,7 @@ grid.arrange(c,d,e,f)
   
 ### Handle Outliers
 
-<span style="color:blue;"> *snippet fsr_outliers*</span> 
+<span style="color:blue;"> *snippet fdr_outliers*</span> 
 
 1. Recheck the data to ensure that no transcription or data entry errors 
   occurred. 
@@ -313,7 +313,7 @@ grid.arrange(c,d,e,f)
 4. Robust Regression (Covered Later in Program) 
 5. Weighted Least Squares (WCS)
 
-```{r fsr_outliers_codeblock, eval=FALSE}
+```{r fdr_outliers_codeblock, eval=FALSE}
 #Tests for finding outliers
 library(ggplot2)
 library(pdp)
@@ -339,11 +339,11 @@ grid.arrange(a,b)
 
 ## Variable Selection
 
-<span style="color:blue;"> *snippet fsr_varselect_linreg*</span> 
+<span style="color:blue;"> *snippet fdr_varselect_linreg*</span> 
 
 When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.
 
-```{r fsr_varselect_linreg_codeblock, eval=FALSE}
+```{r fdr_varselect_linreg_codeblock, eval=FALSE}
 #Create training model
 library(dplyr)
 library(glmnet)
@@ -381,11 +381,11 @@ plot(train_lasso, xvar = "lambda")
 
 ## Model Evaluation
 
-<span style="color:blue;"> *snippet fsr_modeval*</span> 
+<span style="color:blue;"> *snippet fdr_modeval*</span> 
 
 After the variables are selected, it's time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics. 
 
-```{r fsr_modeval_codeblock, eval=FALSE}
+```{r fdr_modeval_codeblock, eval=FALSE}
 #Evaluate various metrics for model accuracy
 library(dplyr)
 

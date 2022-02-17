@@ -110,20 +110,146 @@ snippet shinymod
 	  
 	}
 
+#########################################
+######Custom Snippets
+#########################################
+
+#dplyr
+snippet my_dpipe
+	gapminder %>%
+		filter(year == 2007) %>%
+		mutate(lifeExpMonths = 12 * lifeExp) %>%
+		group_by(continent) %>%
+		summarize(medianLE = median(lifeExpMonths), maxLE = max(lifeExpMonths)) %>%
+		arrange(desc(continent))
+
+snippet my_dtop5values
+	${1:dataframe} %>% 
+		filter(${2:filtervar} == "${3:searchterm}") %>%
+		arrange(desc(${4:sortingvar})) %>% 
+		select(${2:filtervar},${4:sortingvar})
+
+snippet my_dtop5mostfrequent
+	${1:dataframe} %>% 
+		filter(is.na(${2:var}) == FALSE) %>% #slice_max does not work if column contains NAs
+		group_by(${2:var}) %>%
+		summarize(n=n()) %>% 
+		slice_max(order_by = n, n=5) #Use slice_min for bottom 5
+
+#ggplot
+snippet my_gghisbasic
+	ggplot(data = ${1:data}) +
+	geom_histogram(mapping = aes(x = ${2:xvar})) +
+	labs(x = "${3:xlabel}")
+
+snippet my_gghisdens
+	ggplot(${1:data},aes(x=${2:xvar})) +
+	geom_histogram(aes(y=..density..), alpha=0.5) +
+	geom_density( alpha = 0.2) +
+	labs(x = "${3:xlabel}")
+	
+snippet my_ggboxplot
+	ggplot(data = ${1:data}, aes(x="",y=${2:yvar})) + 
+	geom_boxplot() + 
+	geom_hline(yintercept = ${3:hline}) +
+	stat_summary(fun = mean, geom = "point", shape = 20, size = 5, color = "red") +
+	theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+	
+snippet my_ggqq
+	ggplot(data = ${1:data}, aes(sample = ${2:var}, color = as.factor(${3:var}))) +
+	stat_qq() +
+	stat_qq_line()
+	
+snippet my_ggscatter
+	ggplot(${1:data}, aes(x=${2:xvar}, y=${3:yvar}, color=${4:zvar}, size=${5:avar})) +
+	geom_point() +
+	scale_x_log10() + #Take the common log of the x or y axis
+	facet_wrap(~${6:var}) + #Create different scatter plots by this variable
+	geom_smooth(method=lm) #Add Regression line
+
+snippet my_ggbar
+	ggplot(${1:data}) + 
+	geom_bar(aes(x=${2:xvar}, y=${3:yvar}), 
+		position = "dodge", stat = "summary", fun = "mean")
+
+#Model Selection
+snippet my_modselectlinreg
+#Create training model
+	set.seed(19054)
+	${1:dataframe} <- ${1:dataframe} %>% mutate(id = row_number()) #Only necessary if data does not have id-like column
+	train = ${1:dataframe} %>% sample_frac(0.7) #70% of data points are set aside for training (can be changed)
+	test <- anti_join(${1:dataframe}, train, by = 'id') #The remainder are assigned for testing
+	train = train[,c(${2:colnumstovalidate})] #Select columns you want to analyze
+	#train = train[,!(colnames(train) %in% "id")] #Remove id column if not used in modeling
+	
+	# Create full model and empty model
+	full.model = lm(${3:yvar} ~ . , data = train)
+	empty.model = lm(${3:yvar} ~ 1, data = train)
+	
+	# Information Criteria (InfCrit)
+	#AIC: k = 2
+	#BIC: k = log(nrow(train))
+	#p-value: k = qchisq(alpha.f , 1, lower.tail = FALSE)
+	
+	#Create model
+	#alpha.f=0.20 #Only needed for p-value calculation
+	
+	for.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "forward", k = ${5:InfCrit})
+	back.model = step(full.model, scope = list(lower = empty.model, upper = full.model), direction = "backward", k = ${5:InfCrit})
+	step.model = step(empty.model, scope = list(lower = empty.model, upper = full.model), direction = "both", k = ${5:InfCrit})
+	
+snippet my_alpha
+#Used for selecting alpha
+	alpha = 1-pchisq(log(nrow(training)),1)
+	
+snippet my_createdf
+#Create a blank dataframe and assign column names to the variables.
+	${1:dataframe} = data.frame(matrix(ncol = ${2:ncols}, nrow = 0))
+	colnames(${1:dataframe}) <- c('${3:var1}', '${4:var2}', '${5:var3}')
+
+snippet my_eda
+	#Includes a number of different scripts useful for Exploratory Data Analysis
+	sapply(${1:dataframe}, function(x) sum(is.na(x))) #Number of NAs per variable
+
+	#Specify a list of categorical variables to conver to a factor
+	cols = c('${3:var1}', '${4:var2}', '${5:var3}')
+	train[cols] = lapply(train[cols], factor)
+
+	#Impute missing values with median (continuous variables) and mode (categorical variables)
+	#Create indicator variables when imputation occurs for continuous variables
+	library(imputeMissings)
+	train = imputeMissings::impute(${1:dataframe}, object = NULL, method = "median/mode", flag = TRUE)
+	
+snippet my_normalityassumptions
+	#install.packages('nortest')
+	library(nortest)
+	ad.test(${1:linregmodel}\$residuals)
+	shapiro.test(${1:linregmodel}\$residuals)
+	
+	#Also can look at residuals graphically. Use the snippet my_ggqq
+	
+snippet my_writetocsv
+	#Write data frame to .csv (stored in same location as code file)
+	write.csv(${1:df}, file = '${2:filename}.csv', row.names = FALSE )
+	
 ################################
 #Flowsheet Resource Snippets
 ################################
 
-snippet fsr_alpha
+snippet fdr_alpha
 	#Determines alpha value based on sample size and BIC criterion
 	alpha = 1-pchisq(log(nrow(${1:dataset})),1)
+	
+snippet fdr_linreg
+	#Creates a linear regression model that is a function of all predictor variables
+	lm.model = lm(${1:yvar} ~ . , data = ${2:dataset})
 
-snippet fsr_globalF
+snippet fdr_globalF
 	#Global F test: Determines if at least one variable is significant
 	lm.model <- lm(${1:targetvar} ~ ${2:predvar1} + ${3:predvar2}, data = ${4:dataset})
 	summary(lm.model)
 
-snippet fsr_assumptions_linearity
+snippet fdr_assumptions_linearity
 	#Check to see if the below plot is random with an average value of zero
 	library(ggplot2)
 	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
@@ -131,7 +257,9 @@ snippet fsr_assumptions_linearity
 		geom_point(color="blue")+
 		labs(x="Predicted Values",y="Residuals")
 
-snippet fsr_assumptions_constvar 
+
+
+snippet fdr_assumptions_constvar 
 	#Check to see if the below plot has a constant spread over the range of predicted values
 	library(ggplot2)
 	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
@@ -140,7 +268,7 @@ snippet fsr_assumptions_constvar
 		labs(x="Predicted Values",y="Residuals")
 
 
-snippet fsr_assumptions_normdist
+snippet fdr_assumptions_normdist
 	#Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test
 	library(ggplot2)
 	library(nortest)
@@ -149,26 +277,26 @@ snippet fsr_assumptions_normdist
 	ggplot(data = ${2:dataset}, aes(sample = lm.model\$residuals)) + #i. QQ-Plot
 		stat_qq() +
 		stat_qq_line()
-	
+		
 	ad.test(lm.model\$residuals) #ii. Anderson-Darling test. Gives more weight to tails
 	shapiro.test(lm.model\$residuals) #iii. Shapiro-Wilk test. Better for smaller data sets
 
 
-snippet fsr_assumptions_independence
+snippet fdr_assumptions_independence
 	#Can use plot to visually see time-dependence or use Durbin-Watson test
 	library(ggplot2)
 	library(lmtest)
 	lm.model=lm(${1:targetvar}~.,data=${2:dataset})
-	
-	ggplot(train,aes(x=${3:timevariable},y=lm.model\$residuals)) +	#i. Visual Plot
+
+	ggplot(train,aes(x=${3:timevariable},y=lm.model\$residuals)) +  #i. Visual Plot
 		geom_point(color="blue") +
 		labs( x="Time",y="Residuals")
-	
+
 	lm.model=lm(${1:targetvar}~${3:timevariable},data=${2:dataset})
 	dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
 
 
-snippet fsr_assumptions_multicol
+snippet fdr_assumptions_multicol
 	#Check for correlation among predictor variables or calculate the variance inflation factor (VIF)
 	library(car)
 	
@@ -180,7 +308,7 @@ snippet fsr_assumptions_multicol
 	vif(lm.model) #ii. Variance inflation factor (VIF)
 
 
-snippet fsr_outliers
+snippet fdr_outliers
 	#Tests for finding outliers
 	library(ggplot2)
 	library(pdp)
@@ -203,8 +331,8 @@ snippet fsr_outliers
 	
 	grid.arrange(a,b)
 
-
-snippet fsr_influential
+	
+snippet fdr_influential
 	#Tests for finding influential observations
 	library(ggplot2)
 	library(pdp)
@@ -216,43 +344,43 @@ snippet fsr_influential
 	D.cut= 4/(nrow(${2:dataset})-p-1)
 	
 	c = ggplot(lm.model,aes(x=n.index,y=cooks.distance(lm.model))) +
-		geom_point(color="orange") +
-		geom_line(y=D.cut) +
-		labs(title = "Cook's D",x = "Observation",y ="Cook's Distance")
-	
+				geom_point(color="orange") +
+				geom_line(y=D.cut) +
+				labs(title = "Cook's D",x = "Observation",y ="Cook's Distance")
+
 	#ii. DFFITS
 	df.cut=2*(sqrt((p)/nrow(${2:dataset})))
 	
 	d = ggplot(lm.model,aes(x=n.index,y=dffits(lm.model))) +
-		geom_point(color="orange") +
-		geom_line(y=df.cut) +
-		geom_line(y=-df.cut) +
-		labs(title = "DFFITS",x="Observation",y="DFFITS")
-	
+				geom_point(color="orange") +
+				geom_line(y=df.cut) +
+				geom_line(y=-df.cut) +
+				labs(title = "DFFITS",x="Observation",y="DFFITS")
+
 	#Observations that are outside of dffits
 	${2:dataset}[dffits(lm.model) > df.cut | dffits(lm.model) < -df.cut,]
 	
 	#iii. DFBETAS (copy and paste for each variable)
 	db.cut=2/sqrt(nrow(${2:dataset}))
-	
+
 	e = ggplot(lm.model,aes(x=n.index,y=dfbetas(lm.model)[,'${3:variablename}'])) + 
-		geom_point(color="orange") + 
-		geom_line(y=db.cut) + 
-		geom_line(y=-db.cut) + 
-		labs(title = "DFBETA for ${3:variablename}",x="Observation",y="DFBETAS")
+				geom_point(color="orange") + 
+				geom_line(y=db.cut) + 
+				geom_line(y=-db.cut) + 
+				labs(title = "DFBETA for ${3:variablename}",x="Observation",y="DFBETAS")
 	
 	#iv. Hhat
 	hat.cut=2*(p+1)/nrow(${2:dataset})
 	
 	f = ggplot(lm.model,aes(x=n.index,y=hatvalues(lm.model))) +
-		geom_point(color="orange") +
-		geom_line(y=hat.cut) +
-		labs(title = "Hat values",x="Observation",y="Hat Values")
-	
+				geom_point(color="orange") +
+				geom_line(y=hat.cut) +
+				labs(title = "Hat values",x="Observation",y="Hat Values")
+
 	#Print all plots in a grid. Add additional variables for DFBETAS if desired
 	grid.arrange(c,d,e,f)
 
-snippet fsr_varselect_linreg
+snippet fdr_varselect_linreg
 	#Create training model
 	library(dplyr)
 	library(glmnet)
@@ -287,20 +415,20 @@ snippet fsr_varselect_linreg
 	train_lasso = glmnet(x=train_x, y = ${3:yvar}, alpha = 1)
 	plot(train_lasso, xvar = "lambda")
 
-snippet fsr_modeval
+snippet fdr_modeval
 	#Evaluate various metrics for model accuracy
 	library(dplyr)
 	
 	${1:testdataset}\$pred_lm <- predict(${2:finalmodel}, newdata = ${1:testdataset})
 	
 	${1:testdataset} %>% 
-		mutate(lm_APE = 100*abs((${3:yvar} - pred_lm)/${3:yvar})) %>% 
-		mutate(lm_AE = abs(${3:yvar} - pred_lm)) %>% 
-		mutate(lm_SE = (${3:yvar} - pred_lm)^2) %>% 
-		dplyr::summarise(MAPE_lm = mean(lm_APE)
-										 , MAE_lm = mean(lm_AE)
-										 , MSE_lm = mean(lm_SE)
-										 , RMSE_lm = sqrt(mean(lm_SE))
-										 , AIC_lm = AIC(${2:finalmodel})
-										 , BIC_lm = BIC(${2:finalmodel})
-										 , Ra2_lm = summary(${2:finalmodel})\$adj.r.squared)
+	  mutate(lm_APE = 100*abs((${3:yvar} - pred_lm)/${3:yvar})) %>% 
+	  mutate(lm_AE = abs(${3:yvar} - pred_lm)) %>% 
+	  mutate(lm_SE = (${3:yvar} - pred_lm)^2) %>% 
+	  dplyr::summarise(MAPE_lm = mean(lm_APE)
+															, MAE_lm = mean(lm_AE)
+															, MSE_lm = mean(lm_SE)
+															, RMSE_lm = sqrt(mean(lm_SE))
+															, AIC_lm = AIC(${2:finalmodel})
+															, BIC_lm = BIC(${2:finalmodel})
+															, Ra2_lm = summary(${2:finalmodel})\$adj.r.squared)
