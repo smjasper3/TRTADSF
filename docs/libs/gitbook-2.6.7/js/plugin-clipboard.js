@@ -20,7 +20,7 @@ gitbook.require(["gitbook", "jQuery"], function(gitbook, $) {
 
     clipboard = new ClipboardJS(".copy-to-clipboard-button", {
       text: function(trigger) {
-        return trigger.parentNode.textContent;
+        return trigger.parentNode.textContent.slice(4); // Fix for removing "Hide". This code is generated programatically but not sure where, so it will be overwritten with every knit!
       }
     });
 
