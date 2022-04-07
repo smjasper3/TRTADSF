@@ -1,5 +1,48 @@
-# Logistic Regression
+---
+title: "Logistic Regression"
+author: ""
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  bookdown::gitbook:
+      
+---
 
+
+```{r setup, echo=FALSE, warning=FALSE, include=FALSE}
+library(DiagrammeR)
+# Add a common class name for every chunks
+knitr::opts_chunk$set(
+  echo = TRUE)
+
+```
+
+
+# Logistic Regression
 
 WIP
 
+```{r diagram, echo=FALSE, fig.height=14, fig.width=8}
+
+grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle, fontsize=40, style=filled, color='lightblue1']
+  0 [label = 'START HERE!', color='chocolate1', style=filled, URL='#', fontcolor='blue']
+  1 [label = 'Identify Target Variable', URL='#', fontcolor='blue']
+  2 [label = 'Rare Event?', URL='#', fontcolor='blue']
+  4 [label = 'Check for multicollinearity']
+  5 [label = 'Check linearity assumption']
+  
+  node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]
+  3 [label = 'Identify Predictor Variables']
+  
+  # edge definitions with the node IDs
+  0 -> 1 [style=bold]
+  1 -> 2 [style=bold]
+  2 -> 3 [style=bold]
+  3 -> 4 [style=bold]
+  
+  
+
+  }")
+```
