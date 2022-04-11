@@ -60,4 +60,7 @@ Backward selection starts with a full model and removes one variable at a time b
 ### Stepwise Selection
 Stepwise selection starts with an empty model and it combines both forward and backward selection. It tries to add the most significant variable and remove insignificant variables at the same time until there is no improvement of the model with adding or dropping some variables. 
 
+### Regularized Regression
+
+
 
