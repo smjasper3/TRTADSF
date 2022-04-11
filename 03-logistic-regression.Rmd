@@ -46,3 +46,73 @@ grViz("digraph {
 
   }")
 ```
+
+## Identify Target Variable 
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+To begin the process of building a logistic regression model, first identify the target variable you are trying to predict. Many targets will be a binary to predict an event (such as churn/no churn or purchase/no purchase) in which case your target will be the binary variable coded as 1 for 'event' and 0 for 'no event'. It is also possible to have ordinal and nominal targets in binary logistic regression. These will be discussed in greater detail in section XYZ as their assumptions and methodology differ slightly from logistic regression for a binary target. The following discussion of methodologies and analysis is specific to a binary target.
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# coding event/non-event as 1s and 0s
+
+```
+
+## Split Dataset Into Training and Test
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+Before you begin the modeling process, you should first split your dataset into Training and Test sets. Depending on the size of your dataset and needs in the modeling process, you may chose to split into Training, Validation, and Test and use the validation dataset as an intermediate step in model selection. Ratios are typically in the range of 70/20/10, although it is ultimately your discretion. It is, however, generally advised that Training should not be less than ~60% of your dataset. 
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# code for splitting training, validation, test
+
+```
+
+### Rare Event Identification 
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+The next step after identifying your target variable and splitting your data is to understand if you are trying to model a rare event. The typical rule of thumb is that when your 'event' target is less than 5% of observations in the dataset, it is considered to be a rare event. This can cause problems in terms of your model being able to pick up on the signal associated with the 'event' observations. We don't want our model to predict all 0s and think that a 95% accruacy is an acceptable performance metric. 
+
+An important note: you may check your full dataset to see if rare event modeling will be an issue. However, oversampling techniques described below should be done ONLY for the Training dataset. 
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# code for table of event/non-event
+
+```
+
+### Oversampling  
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+[Take 'repeated' samples of event observations until dataset is more evenly balanced.]
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# code for Oversampling
+
+```
+
+### Undersampling  
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+[Remove some portion of non-event observations until dataset is more evenly balanced.]
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# code for Undersampling
+
+```
+
+### Observation weights for building your model
+
+<span style="color:blue;"> *snippet fdr_XXX *</span> 
+
+Once you've oversampled your training dataset to an event/non-event proportion that is more suitable for modeling, you will need to create a 'weights' column for your dataset so that your model can re-balance as it is being built. Although your data now has a better ratio of event to non-event for modeling purposes, it no longer reflects 'real' data and so you want to make sure that fact is incorporated into the creation of your final model. Most often this is done by creating a 'weights' value that is fed into the logistic regression algorithm that re-balances observation weights; this is most appropraite when your dataset is large (>1000) and/or you are building the model for the first time and doing variable selection. 
+
+[IF you have a small dataset or already have a specified model (variables already determined and you are just re-training coefficients), adjusting the intercept may be prefereable and will be discussed in greater detail later.]
+
+```{r fdr_XXX_codeblock, eval=FALSE}
+# code for Undersampling
+
+```
