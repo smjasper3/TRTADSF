@@ -46,3 +46,18 @@ grViz("digraph {
 
   }")
 ```
+
+## Variable Selection
+
+There are different ways to select important variables for the final model. The most common techniques forward, backward, and stepwise selection. All three techniques try to improve the model by adding or removing one variable at a time based on a specific selection criteria. AIC, BIC, and p-value are different selecrtion criteria we can use. 
+
+### Forward Selection
+Forward selection starts with an empty model and adds one variable at a time based on our selection criteria. The variables with the highest significance will be added to the model. This step is done again with remaining variables until there is no variable that is significant. 
+
+### Backward Selection
+Backward selection starts with a full model and removes one variable at a time based on our selection criteria. The variables with the lowest significance will be removed from the model. This step is done again with remaining variables until there is no variable that is insignificant. 
+
+### Stepwise Selection
+Stepwise selection starts with an empty model and it combines both forward and backward selection. It tries to add the most significant variable and remove insignificant variables at the same time until there is no improvement of the model with adding or dropping some variables. 
+
+
