@@ -18,73 +18,74 @@ knitr::opts_chunk$set(
 
 ```
 
-# 5.1 Supervised
-# 5.1.1: KNN
+# Data Mining
 
-## 5.1.1.1: Choose K
+## Supervised
+### KNN
+
+#### Choose K
 The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k=n (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.
 
-## 5.1.1.2: Measuring Distance
+#### Measuring Distance
 Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.
 
-## 5.1.1.3: Classification/Prediction Rules
+#### Classification/Prediction Rules
 The output or value of a new observation is based on the nearest neighbors of the new observation. However, there are many different ways to have those neighbors define the new observation.
 
 __Classification:__ majority rules is the most common classification rule, with the most frequent target outcome value within the nearest neighbors being used to determine the classification. If using this method, it is best to set an odd k value such that there are no ties in voting (if there are two classes). Another example for a classification rule is weighting the vote by the nearness of the neighbor. Alternatively, the user can set another rule if it is expected to fit the data better.
 
 __Prediction:__ common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.
 
-## 5.1.1.4: Assumptions and Other Notes
+#### Assumptions and Other Notes
 KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.
 
 In order to run KNN in R, all categorical variables must first be converted into numeric variables.
 
 
-# 5.1.2: CART: Classification and Regression Trees
+### CART: Classification and Regression Trees
 
-## 5.1.2.1: Data Processing
+#### Data Processing
 Decision trees can handle categorical, continuous, and discrete data. However, ordinal variables tend to be treated as continuous to preserve the importance of order. Decision trees can also handle missing values by setting those values as a “missing” category.
 
 Before building the model, create separate train and test datasets (a validation dataset is optional). The decision tree will be trained on the training dataset and evaluated on the test dataset.
 
-## 5.1.2.2: Choosing Best Splits
+#### Choosing Best Splits
 __Classification:__ maximizing purity is the determining factor in identifying the best splits within classification trees. Purity measures how homogeneous the nodes are following split points. Most commonly, Gini and Entropy are used as measures of impurity to calculate the best splits.
 
 __Regression:__ minimizing SSE (Sum of Squared Errors) determines the splits within the tree.
 
-## 5.1.2.3: Model Building and Predictions
+#### Model Building and Predictions
 Afterdetermining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.
 
 In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.
 
-## 5.1.2.4: Evaluation
+#### Evaluation
 Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.
 
-## 5.1.2.5: Pruning and Tuning
+#### Pruning and Tuning
 Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.
 
 After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.
 
 
-# Unsupervised
-# 5.2.1: Data Clustering
+## Unsupervised
+### Data Clustering
+Sarah Stott information
 
-## Sarah Stott information
 
+### Assocation Analysis
 
-# 5.2.2: Assocation Analysis
-
-## 5.2.2.1: Data Processing
+#### Data Processing
 To conduct association analysis, transactional data must be provided in a wide format.
 
-## 5.2.2.4: Finding Association Rules
+#### Finding Association Rules
 There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.
 
-## 5.2.2.3: Assessing Association Rule Strength
+#### Assessing Association Rule Strength
 There are three main statistics in measuring the strength of an association rule:
 1) __Support:__ the probability of seeing these items together.
 2) __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
 3) __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
 
-## 5.2.2.4: Miscellaneous Notes
+#### Miscellaneous Notes
 There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.

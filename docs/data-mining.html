@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Data Mining | Data Mining</title>
+  <meta name="description" content="Chapter 5 Data Mining | Data Mining" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Data Mining | Data Mining" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Data Mining | Data Mining" />
+  
+  
+  
+
+<meta name="author" content="Sam Jasper, Lindsey Fisher, Surabhi Sood, Sarah Stott, and Liam Dao" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="time-series.html"/>
+<link rel="next" href="machine-learning.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+      <script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+      <script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+      <style type="text/css">
+      .code-folding-btn { margin-bottom: 4px; }
+      .row { display: flex; }
+      .collapse { display: none; }
+      .in { display:block }
+      .pull-right > .dropdown-menu {
+          right: 0;
+          left: auto;
+      }
+      .open > .dropdown-menu {
+          display: block;
+      }
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          z-index: 1000;
+          display: none;
+          float: left;
+          min-width: 160px;
+          padding: 5px 0;
+          margin: 2px 0 0;
+          font-size: 14px;
+          text-align: left;
+          list-style: none;
+          background-color: #fff;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          border: 1px solid rgba(0,0,0,.15);
+          border-radius: 4px;
+          -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+          box-shadow: 0 6px 12px rgba(0,0,0,.175);
+      }
+      </style>
+      <script>
+      $(document).ready(function () {
+        window.initializeCodeFolding("show" === "hide");
+      });
+      </script>
+      <script>
+document.write('<button id="backToTop"><a href="#section-" style="color: white">Back To Top</a></button>')
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TRTADSF</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> To Rule Them All: DS Flowcharts</a></li>
+<li class="chapter" data-level="2" data-path="linear-regression.html"><a href="linear-regression.html"><i class="fa fa-check"></i><b>2</b> Linear Regression</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="linear-regression.html"><a href="linear-regression.html#select-alpha-level"><i class="fa fa-check"></i><b>2.1</b> Select Alpha Level</a></li>
+<li class="chapter" data-level="2.2" data-path="linear-regression.html"><a href="linear-regression.html#create-linear-model-of-all-variables"><i class="fa fa-check"></i><b>2.2</b> Create Linear Model of All Variables</a></li>
+<li class="chapter" data-level="2.3" data-path="linear-regression.html"><a href="linear-regression.html#global-f-test"><i class="fa fa-check"></i><b>2.3</b> Global F-Test</a></li>
+<li class="chapter" data-level="2.4" data-path="linear-regression.html"><a href="linear-regression.html#assumptions"><i class="fa fa-check"></i><b>2.4</b> Assumptions</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="linear-regression.html"><a href="linear-regression.html#linearity"><i class="fa fa-check"></i><b>2.4.1</b> Linearity</a></li>
+<li class="chapter" data-level="2.4.2" data-path="linear-regression.html"><a href="linear-regression.html#independent-random-errors"><i class="fa fa-check"></i><b>2.4.2</b> Independent Random Errors</a></li>
+<li class="chapter" data-level="2.4.3" data-path="linear-regression.html"><a href="linear-regression.html#random-errors-normally-distributed"><i class="fa fa-check"></i><b>2.4.3</b> Random Errors Normally Distributed</a></li>
+<li class="chapter" data-level="2.4.4" data-path="linear-regression.html"><a href="linear-regression.html#random-error-constant-variance"><i class="fa fa-check"></i><b>2.4.4</b> Random Error Constant Variance</a></li>
+<li class="chapter" data-level="2.4.5" data-path="linear-regression.html"><a href="linear-regression.html#single-predictor"><i class="fa fa-check"></i><b>2.4.5</b> Single Predictor?</a></li>
+<li class="chapter" data-level="2.4.6" data-path="linear-regression.html"><a href="linear-regression.html#multiple-predictors"><i class="fa fa-check"></i><b>2.4.6</b> Multiple Predictors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="linear-regression.html"><a href="linear-regression.html#influential-observations-outliers"><i class="fa fa-check"></i><b>2.5</b> Influential Observations / Outliers</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="linear-regression.html"><a href="linear-regression.html#identify-influential-observations"><i class="fa fa-check"></i><b>2.5.1</b> Identify influential observations</a></li>
+<li class="chapter" data-level="2.5.2" data-path="linear-regression.html"><a href="linear-regression.html#handle-outliers"><i class="fa fa-check"></i><b>2.5.2</b> Handle Outliers</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="linear-regression.html"><a href="linear-regression.html#variable-selection"><i class="fa fa-check"></i><b>2.6</b> Variable Selection</a></li>
+<li class="chapter" data-level="2.7" data-path="linear-regression.html"><a href="linear-regression.html#model-evaluation"><i class="fa fa-check"></i><b>2.7</b> Model Evaluation</a></li>
+<li class="chapter" data-level="2.8" data-path="linear-regression.html"><a href="linear-regression.html#summarize-findings"><i class="fa fa-check"></i><b>2.8</b> Summarize Findings</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>3</b> Logistic Regression</a></li>
+<li class="chapter" data-level="4" data-path="time-series.html"><a href="time-series.html"><i class="fa fa-check"></i><b>4</b> Time Series</a></li>
+<li class="chapter" data-level="5" data-path="data-mining.html"><a href="data-mining.html"><i class="fa fa-check"></i><b>5</b> Data Mining</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-mining.html"><a href="data-mining.html#supervised"><i class="fa fa-check"></i><b>5.1</b> Supervised</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="data-mining.html"><a href="data-mining.html#knn"><i class="fa fa-check"></i><b>5.1.1</b> KNN</a></li>
+<li class="chapter" data-level="5.1.2" data-path="data-mining.html"><a href="data-mining.html#cart-classification-and-regression-trees"><i class="fa fa-check"></i><b>5.1.2</b> CART: Classification and Regression Trees</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="data-mining.html"><a href="data-mining.html#unsupervised"><i class="fa fa-check"></i><b>5.2</b> Unsupervised</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-mining.html"><a href="data-mining.html#data-clustering"><i class="fa fa-check"></i><b>5.2.1</b> Data Clustering</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-mining.html"><a href="data-mining.html#assocation-analysis"><i class="fa fa-check"></i><b>5.2.2</b> Assocation Analysis</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="machine-learning.html"><a href="machine-learning.html"><i class="fa fa-check"></i><b>6</b> Machine Learning</a></li>
+<li class="chapter" data-level="7" data-path="survival-analysis.html"><a href="survival-analysis.html"><i class="fa fa-check"></i><b>7</b> Survival Analysis</a></li>
+<li class="chapter" data-level="8" data-path="text-analytics.html"><a href="text-analytics.html"><i class="fa fa-check"></i><b>8</b> Text Analytics</a></li>
+<li class="chapter" data-level="9" data-path="analytics-additional-topics.html"><a href="analytics-additional-topics.html"><i class="fa fa-check"></i><b>9</b> Analytics: Additional Topics</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="analytics-additional-topics.html"><a href="analytics-additional-topics.html#data-cleaning"><i class="fa fa-check"></i><b>9.1</b> Data Cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="analytics-additional-topics.html"><a href="analytics-additional-topics.html#ensemble-models"><i class="fa fa-check"></i><b>9.2</b> Ensemble Models</a></li>
+<li class="chapter" data-level="9.3" data-path="analytics-additional-topics.html"><a href="analytics-additional-topics.html#transforms"><i class="fa fa-check"></i><b>9.3</b> Transforms</a></li>
+<li class="chapter" data-level="9.4" data-path="analytics-additional-topics.html"><a href="analytics-additional-topics.html#regularized-regression"><i class="fa fa-check"></i><b>9.4</b> Regularized Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="programming-r.html"><a href="programming-r.html"><i class="fa fa-check"></i><b>10</b> Programming: R</a></li>
+<li class="chapter" data-level="11" data-path="programming-python.html"><a href="programming-python.html"><i class="fa fa-check"></i><b>11</b> Programming: Python</a></li>
+<li class="chapter" data-level="12" data-path="programming-sql.html"><a href="programming-sql.html"><i class="fa fa-check"></i><b>12</b> Programming: SQL</a></li>
+<li class="chapter" data-level="13" data-path="programming-cloud-computing.html"><a href="programming-cloud-computing.html"><i class="fa fa-check"></i><b>13</b> Programming: Cloud Computing</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Mining</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-mining" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Data Mining</h1>
+<div id="supervised" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Supervised</h2>
+<div id="knn" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> KNN</h3>
+<div id="choose-k" class="section level4" number="5.1.1.1">
+<h4><span class="header-section-number">5.1.1.1</span> Choose K</h4>
+<p>The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k=n (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.</p>
+</div>
+<div id="measuring-distance" class="section level4" number="5.1.1.2">
+<h4><span class="header-section-number">5.1.1.2</span> Measuring Distance</h4>
+<p>Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.</p>
+</div>
+<div id="classificationprediction-rules" class="section level4" number="5.1.1.3">
+<h4><span class="header-section-number">5.1.1.3</span> Classification/Prediction Rules</h4>
+<p>The output or value of a new observation is based on the nearest neighbors of the new observation. However, there are many different ways to have those neighbors define the new observation.</p>
+<p><strong>Classification:</strong> majority rules is the most common classification rule, with the most frequent target outcome value within the nearest neighbors being used to determine the classification. If using this method, it is best to set an odd k value such that there are no ties in voting (if there are two classes). Another example for a classification rule is weighting the vote by the nearness of the neighbor. Alternatively, the user can set another rule if it is expected to fit the data better.</p>
+<p><strong>Prediction:</strong> common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.</p>
+</div>
+<div id="assumptions-and-other-notes" class="section level4" number="5.1.1.4">
+<h4><span class="header-section-number">5.1.1.4</span> Assumptions and Other Notes</h4>
+<p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
+<p>In order to run KNN in R, all categorical variables must first be converted into numeric variables.</p>
+</div>
+</div>
+<div id="cart-classification-and-regression-trees" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> CART: Classification and Regression Trees</h3>
+<div id="data-processing" class="section level4" number="5.1.2.1">
+<h4><span class="header-section-number">5.1.2.1</span> Data Processing</h4>
+<p>Decision trees can handle categorical, continuous, and discrete data. However, ordinal variables tend to be treated as continuous to preserve the importance of order. Decision trees can also handle missing values by setting those values as a “missing” category.</p>
+<p>Before building the model, create separate train and test datasets (a validation dataset is optional). The decision tree will be trained on the training dataset and evaluated on the test dataset.</p>
+</div>
+<div id="choosing-best-splits" class="section level4" number="5.1.2.2">
+<h4><span class="header-section-number">5.1.2.2</span> Choosing Best Splits</h4>
+<p><strong>Classification:</strong> maximizing purity is the determining factor in identifying the best splits within classification trees. Purity measures how homogeneous the nodes are following split points. Most commonly, Gini and Entropy are used as measures of impurity to calculate the best splits.</p>
+<p><strong>Regression:</strong> minimizing SSE (Sum of Squared Errors) determines the splits within the tree.</p>
+</div>
+<div id="model-building-and-predictions" class="section level4" number="5.1.2.3">
+<h4><span class="header-section-number">5.1.2.3</span> Model Building and Predictions</h4>
+<p>Afterdetermining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.</p>
+<p>In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.</p>
+</div>
+<div id="evaluation" class="section level4" number="5.1.2.4">
+<h4><span class="header-section-number">5.1.2.4</span> Evaluation</h4>
+<p>Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.</p>
+</div>
+<div id="pruning-and-tuning" class="section level4" number="5.1.2.5">
+<h4><span class="header-section-number">5.1.2.5</span> Pruning and Tuning</h4>
+<p>Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.</p>
+<p>After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.</p>
+</div>
+</div>
+</div>
+<div id="unsupervised" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Unsupervised</h2>
+<div id="data-clustering" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Data Clustering</h3>
+<p>Sarah Stott information</p>
+</div>
+<div id="assocation-analysis" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Assocation Analysis</h3>
+<div id="data-processing-1" class="section level4" number="5.2.2.1">
+<h4><span class="header-section-number">5.2.2.1</span> Data Processing</h4>
+<p>To conduct association analysis, transactional data must be provided in a wide format.</p>
+</div>
+<div id="finding-association-rules" class="section level4" number="5.2.2.2">
+<h4><span class="header-section-number">5.2.2.2</span> Finding Association Rules</h4>
+<p>There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.</p>
+</div>
+<div id="assessing-association-rule-strength" class="section level4" number="5.2.2.3">
+<h4><span class="header-section-number">5.2.2.3</span> Assessing Association Rule Strength</h4>
+<p>There are three main statistics in measuring the strength of an association rule:
+1) <strong>Support:</strong> the probability of seeing these items together.
+2) <strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)
+3) <strong>Lift:</strong> how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.</p>
+</div>
+<div id="miscellaneous-notes" class="section level4" number="5.2.2.4">
+<h4><span class="header-section-number">5.2.2.4</span> Miscellaneous Notes</h4>
+<p>There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.</p>
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="time-series.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="machine-learning.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/smjasper3/TRTADSF/edit/master/05-data-mining.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/smjasper3/TRTADSF/blob/master/05-data-mining.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
