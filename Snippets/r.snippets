@@ -310,3 +310,152 @@ snippet fdr_modeval
 															, AIC_lm = AIC(${2:finalmodel})
 															, BIC_lm = BIC(${2:finalmodel})
 															, Ra2_lm = summary(${2:finalmodel})\$adj.r.squared)
+
+## K-Means
+
+snippet fdr_dm_continous
+	#creates plots for exploring all continous variables
+	library(ggplot2)
+	ggplot(melt(${1:dataset}), aes(x=value)) +
+	geom_histogram()+
+	facet_wrap(~variable)
+				
+snippet fdr_dm_scal
+	#standard scaling of data in data mining
+	library(base)
+	scale(${1:dataset})
+	
+	#min-max scaling of data in data mining
+	library(BBmisc)
+	normalize(${1:dataset})
+				
+snippet fdr_dm_clusters
+	library(factoextra)
+	#to find optimal number of clusters
+	set.seed(12345)
+	#if r throws an error for generating the plot
+	while(!is.null(dev.list()))
+	dev.off()
+	# method : silhouette, wss method
+	# k.max : integer value, number of clusters
+	fviz_nbclust(${1:scaled_data}, kmeans, method="${2:method}",k.max=${3:num})
+				
+snippet fdr_dm_K_Means
+	library(stats)
+	library(factoextra)
+	#creating clusters with centers obtains from silhoutte/wss/business context
+	#centers and nstart - integer value
+	cluster <- kmeans(${1:scaled_data}, centers=${1:num}, nstart=${2:num})
+	
+	#plotting the clusters
+	while(!is.null(dev.list()))
+	dev.off() #use if r throws error while displaying the plot
+	fviz_cluster(Cluster_wss, data = ${1:scaled_data})
+	
+snippet fdr_dm_cluster_insight
+	library(tidyverse)
+	#summarizing clusters going back to the origionall data
+	profile.kmeans <- cbind(${1:dataset},cluster$cluster)
+	all.k <- profile.kmeans %>%
+			group_by(cluster$cluster) %>%
+			summarise(col1 = mean(col1),
+								col2 = mean(col2),
+								col3 = mean(col3))
+								
+snippet fdr_dm_agglomerative
+	library(stats)
+	library(cluster)
+	library(dendextend)
+	# hierarchical clustering and visualization through agnes
+	# method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski
+	dist.matrix <- dist(${1:scaled_data, method="${2:method}")
+	
+	# method - Average, Single, Ward, Weighted 
+	h1.comp.eucl=agnes(dist.matrix,method="${3:method}") 
+	
+	# plotting the tree
+	pltree(h1.comp.eucl, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
+	
+	#agglomerative coefficient
+	h1.comp.eucl$ac 
+	
+	# use a value of k for stopping the dendogram 
+	cut_avg <- cutree(h1.comp.eucl, k=${4:num})
+
+	#visualizing the clusters with colors
+	avg_dend_obj <- as.dendrogram(h1.comp.eucl)
+	avg_col_dend <- color_branches(avg_dend_obj,k = ${4:num})
+	plot(avg_col_dend)
+
+
+snippet fdr_dm_divisive
+	library(stats)
+	library(cluster)
+	# hierarchical clustering and visualization through Diana
+	hc4 <- diana(${1:scaled_data})
+	hc4$dc
+	
+	# plotting the tree
+	pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+	clust <- cutree(hc4, k = ${2:num})
+
+	pltree(hc4, hang=-1, cex = 0.6,main ="Dendrogram of diana" )
+	rect.hclust(hc4, k = ${2:num}, border = 2:10)
+	
+## Market Basket Analysis
+	
+snippet fdr_dm_transactional_dataset
+	library(arules)
+	library(base)
+	library(RColorBrewer)
+	
+	# id - any unique column in the dataset
+	# description - list of products
+	trans.data <- as(split(${1:dataset}$description, ${1:dataset}$id), "transactions")
+	inspect(trans.data)
+	
+	# visualizing the top products
+	# type="relative","absolute"
+	itemFrequencyPlot(trans.data, 
+	topN=10, 
+	type="absolute",
+	col=brewer.pal(8,'Pastel2'), 
+	main="Absolute Item Frequency Plot")
+	
+snippet fdr_dm_mining_rules
+	library(arules)
+	library(tidyverse)
+
+	#Mining the rules 
+	association.rules <- apriori(${1:transactional_data}, parameter = list(supp=${2:num}, 
+	conf=${3:num},
+	maxlen=${4:num}))
+
+	summary(association.rules)
+	
+	# visualizing rules in the form of a table
+	rules.table <- inspect(association.rules[1:10])
+	colnames(rules.table)[2] <- "direction"
+	rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
+	
+snippet fdr_dm_product_mining_rule
+	library(arules)
+	library(tidyverse)
+	
+	#rule for a particular product
+	product.rule  = apriori(${1:transactional_data}, 
+	parameter = list(supp=${2:num}, conf=${3:num}),
+	appearance = list(default="lhs",rhs="${4:Product}"))
+
+	product.rule.table <- inspect(product.rule)
+	colnames(product.rule.table)[2] <- "direction"
+	product.rule.table %>% 
+	arrange(desc(lift)) %>% 
+	select(lhs,rhs,lift,confidence,count)
+
+snippet fdr_dm_interactive_graph
+	#Interactive graphs
+	#by: confidence, lift , support
+	top10Rules <- head(${1:association.rules}, n = ${2:num}, by = "confidence")
+	plot(top10Rules, method = "graph",  engine = "htmlwidget")
+	
