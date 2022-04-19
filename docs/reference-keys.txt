@@ -52,3 +52,13 @@ data-processing-1
 finding-association-rules
 assessing-association-rule-strength
 miscellaneous-notes
+hard
+flat
+k-means
+dbscan
+hierarchical
+agglomerative
+divisive
+fuzzy
+fcm
+gmm

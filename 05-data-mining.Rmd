@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 ### KNN
 
 #### Choose K
-The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k=n (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.
+The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.
 
 #### Measuring Distance
 Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.
@@ -55,7 +55,7 @@ __Classification:__ maximizing purity is the determining factor in identifying t
 __Regression:__ minimizing SSE (Sum of Squared Errors) determines the splits within the tree.
 
 #### Model Building and Predictions
-Afterdetermining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.
+After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.
 
 In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.
 
