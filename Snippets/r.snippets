@@ -359,7 +359,7 @@ snippet fdr_dm_agglomerative
 	library(dendextend)
 	# hierarchical clustering and visualization through agnes
 	# method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski
-	dist.matrix <- dist(${1:scaled_data, method="${2:method}")
+	dist.matrix <- dist(${1:scaled_data}, method="${2:method}")
 	
 	# method - Average, Single, Ward, Weighted 
 	h1.comp.eucl=agnes(dist.matrix,method="${3:method}") 
