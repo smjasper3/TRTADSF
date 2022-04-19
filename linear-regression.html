@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Linear Regression</title>
+  <meta name="description" content="Linear Regression" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Linear Regression" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Linear Regression" />
+  
+  
+  
+
+<meta name="author" content="Sam Jasper and Jackson de Oliveira" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.9/grViz.js"></script>
+
+      <script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+      <script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+      <style type="text/css">
+      .code-folding-btn { margin-bottom: 4px; }
+      .row { display: flex; }
+      .collapse { display: none; }
+      .in { display:block }
+      .pull-right > .dropdown-menu {
+          right: 0;
+          left: auto;
+      }
+      .open > .dropdown-menu {
+          display: block;
+      }
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          z-index: 1000;
+          display: none;
+          float: left;
+          min-width: 160px;
+          padding: 5px 0;
+          margin: 2px 0 0;
+          font-size: 14px;
+          text-align: left;
+          list-style: none;
+          background-color: #fff;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          border: 1px solid rgba(0,0,0,.15);
+          border-radius: 4px;
+          -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+          box-shadow: 0 6px 12px rgba(0,0,0,.175);
+      }
+      </style>
+      <script>
+      $(document).ready(function () {
+        window.initializeCodeFolding("show" === "hide");
+      });
+      </script>
+      <script>
+document.write('<button id="backToTop"><a href="#section-" style="color: white">Back To Top</a></button>')
+</script>
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TRTADSF</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path=""><a href="#linear-regression"><i class="fa fa-check"></i><b>1</b> Linear Regression</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path=""><a href="#select-alpha-level"><i class="fa fa-check"></i><b>1.1</b> Select Alpha Level</a></li>
+<li class="chapter" data-level="1.2" data-path=""><a href="#create-linear-model-of-all-variables"><i class="fa fa-check"></i><b>1.2</b> Create Linear Model of All Variables</a></li>
+<li class="chapter" data-level="1.3" data-path=""><a href="#global-f-test"><i class="fa fa-check"></i><b>1.3</b> Global F-Test</a></li>
+<li class="chapter" data-level="1.4" data-path=""><a href="#assumptions"><i class="fa fa-check"></i><b>1.4</b> Assumptions</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path=""><a href="#linearity"><i class="fa fa-check"></i><b>1.4.1</b> Linearity</a></li>
+<li class="chapter" data-level="1.4.2" data-path=""><a href="#independent-random-errors"><i class="fa fa-check"></i><b>1.4.2</b> Independent Random Errors</a></li>
+<li class="chapter" data-level="1.4.3" data-path=""><a href="#random-errors-normally-distributed"><i class="fa fa-check"></i><b>1.4.3</b> Random Errors Normally Distributed</a></li>
+<li class="chapter" data-level="1.4.4" data-path=""><a href="#random-error-constant-variance"><i class="fa fa-check"></i><b>1.4.4</b> Random Error Constant Variance</a></li>
+<li class="chapter" data-level="1.4.5" data-path=""><a href="#single-predictor"><i class="fa fa-check"></i><b>1.4.5</b> Single Predictor?</a></li>
+<li class="chapter" data-level="1.4.6" data-path=""><a href="#multiple-predictors"><i class="fa fa-check"></i><b>1.4.6</b> Multiple Predictors</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path=""><a href="#influential-observations-outliers"><i class="fa fa-check"></i><b>1.5</b> Influential Observations / Outliers</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path=""><a href="#identify-influential-observations"><i class="fa fa-check"></i><b>1.5.1</b> Identify influential observations</a></li>
+<li class="chapter" data-level="1.5.2" data-path=""><a href="#handle-outliers"><i class="fa fa-check"></i><b>1.5.2</b> Handle Outliers</a></li>
+</ul></li>
+<li class="chapter" data-level="1.6" data-path=""><a href="#variable-selection"><i class="fa fa-check"></i><b>1.6</b> Variable Selection</a></li>
+<li class="chapter" data-level="1.7" data-path=""><a href="#model-evaluation"><i class="fa fa-check"></i><b>1.7</b> Model Evaluation</a></li>
+<li class="chapter" data-level="1.8" data-path=""><a href="#summarize-findings"><i class="fa fa-check"></i><b>1.8</b> Summarize Findings</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Linear Regression</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Linear Regression</h1>
+<p class="author"><em>Sam Jasper and Jackson de Oliveira</em></p>
+<p class="date"><em>19 April, 2022</em></p>
+</div>
+<div id="linear-regression" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Linear Regression<a href="#linear-regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="htmlwidget-c4cef125b7c36f9a6f2c" style="width:768px;height:1344px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c4cef125b7c36f9a6f2c">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle, fontsize=40, style=filled, color=\"lightblue1\"]\n  0 [label = \"START HERE!\", color=\"chocolate1\", style=filled, URL=\"#select-alpha-level\", fontcolor=\"blue\"]\n  1 [label = \"Build a linear model with all variables\", URL=\"#create-linear-model-of-all-variables\", fontcolor=\"blue\"]\n  H [label = \"Re-evaluate Variables \n  and/or Model Type\"]\n  10 [label = \"1. WLS/IRLS\n  2. Transform\n  3. Different Distribution\"]\n  13 [label = \"Remove Var(s) or \n  Create new transformed vars\"]\n  14 [label = \"Handle Influential \n  Observations\", URL=\"#influential-observations-outliers\", fontcolor=\"blue\"]\n  15 [label = \"Select Variable Evaluation\n  Statistic\"]\n  16 [label = \"Select Variable \n  Selection Technique\", URL=\"#variable-selection\", fontcolor=\"blue\"]\n  17 [label = \"Select Model \n  Evaluation Statistic\", URL=\"#model-evaluation\", fontcolor=\"blue\"]\n  18 [label = \"Summarize\n  Findings\", URL=\"#summarize-findings\", fontcolor=\"blue\"]\n  \n  node [shape = diamond, fontsize=40, style=filled, color=cornsilk2]\n  2 [label = \"Is a global F-Test \n  significant?\", URL=\"#global-f-test\", fontcolor=\"blue\"]\n  3 [label = \"Test Assumptions: \n  Linearity of the mean\", URL=\"#linearity\", fontcolor=\"blue\"]\n  6 [label = \"Residuals Polynomial?\n  Use Higher Order\"]\n  4 [label = \"Test Assumptions: \n  Independent Random Errors\", URL=\"#independent-random-errors\", fontcolor=\"blue\"]\n  5 [label = \"Test Assumptions:\n  Normality\", URL=\"#random-errors-normally-distributed\", fontcolor=\"blue\"]\n  7 [label = \"Box Cox \n  Transform\"]\n  8 [label = \"Transform \n  X-Values\"]\n  9 [label = \"Test Assumptions: \n  Constant Variance\", URL=\"#random-error-constant-variance\", fontcolor=\"blue\"]\n  11 [label = \"Multiple \n  X-Vars?\", URL=\"#single-predictor\", fontcolor=\"blue\"]\n  12 [label = \"Any VIF \n  > 10?\", URL=\"#check-for-multicollinearity\", fontcolor=\"blue\"]\n\n  \n  # edge definitions with the node IDs\n  0 -> 1 [style=bold]\n  1 -> 2 [style=bold]\n  H -> 1 [style=bold]\n  2 -> H [label = \"No\", fontsize=40, style=dashed]\n  2 -> 3 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 4 [label = \"Yes\", fontsize=40, style=bold]\n  3 -> 6 [label = \"No\", fontsize=40, style=dashed]\n  6 -> H [label = \"Yes\", fontsize=40, style=bold]\n  6 -> H [label = \"No\", fontsize=40, style=dashed]\n  4 -> 5 [label = \"Yes\", fontsize=40, style=bold]\n  4 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 7 [label = \"No\", fontsize=40, style=dashed]\n  7 -> 8 [label = \"No\", fontsize=40, style=dashed]\n  8 -> H [label = \"No\", fontsize=40, style=dashed]\n  5 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  7 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  8 -> 9 [label = \"Normal\", fontsize=40, style=bold]\n  9 -> 10 [label = \"No\", fontsize=40, style=dashed]\n  10 -> H [label = \"No\", fontsize=40, style=dashed]\n  9 -> 11 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 12 [label = \"Yes\", fontsize=40, style=bold]\n  12 -> 13 [label = \"Yes\", fontsize=40, style=bold]\n  11 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  13 -> 14 [style=bold]\n  12 -> 14 [label = \"No\", fontsize=40, style=dashed]\n  14 -> 15 [style=bold]\n  15 -> 16 [style=bold]\n  16 -> 17 [style=bold]\n  17 -> 18 [style=bold]\n  \n\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="select-alpha-level" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Select Alpha Level<a href="#select-alpha-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><span style="color:blue;"> <em>snippet fdr_alpha </em></span></p>
+<p>There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Determines alpha value based on sample size and BIC criterion</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(<span class="fu">log</span>(<span class="fu">nrow</span>(dataset)),<span class="dv">1</span>)</span></code></pre></div>
+</div>
+<div id="create-linear-model-of-all-variables" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Create Linear Model of All Variables<a href="#create-linear-model-of-all-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Assuming you have a reasonable number of variables, start by putting them all into a model to predict the target. Variable selection/ reduction will occur later in the process. If you have a large number of variables, you can consider variable reduction or a different analytical technique.</p>
+</div>
+<div id="global-f-test" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Global F-Test<a href="#global-f-test" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><span style="color:blue;"> <em>snippet fdr_globalF</em> </span></p>
+<p>Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Global F test: Determines if at least one variable is significant</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>lm.model <span class="ot">&lt;-</span> <span class="fu">lm</span>(targetvar <span class="sc">~</span> predvar1 <span class="sc">+</span> predvar2, <span class="at">data =</span> dataset)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.model)</span></code></pre></div>
+</div>
+<div id="assumptions" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Assumptions<a href="#assumptions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms.</p>
+<div id="linearity" class="section level3 hasAnchor" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Linearity<a href="#linearity" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_assumptions_linearity</em> </span></p>
+<p>Check if they are linear (yes, keep moving)
+(No) If they look polynomial/ quadratic/ etc. reconsider higher order terms</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot is random with an average value of zero</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">fitted</span>(lm.model),<span class="at">y=</span><span class="fu">resid</span>(lm.model))) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;blue&quot;</span>)<span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Predicted Values&quot;</span>,<span class="at">y=</span><span class="st">&quot;Residuals&quot;</span>)</span></code></pre></div>
+</div>
+<div id="independent-random-errors" class="section level3 hasAnchor" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Independent Random Errors<a href="#independent-random-errors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_assumptions_independence </em></span></p>
+<p>Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Can use plot to visually see time-dependence or use Durbin-Watson test</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(train,<span class="fu">aes</span>(<span class="at">x=</span>timevariable,<span class="at">y=</span>lm.model<span class="sc">$</span>residuals)) <span class="sc">+</span>  <span class="co">#i. Visual Plot</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x=</span><span class="st">&quot;Time&quot;</span>,<span class="at">y=</span><span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>timevariable,<span class="at">data=</span>dataset)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(lm.model,<span class="at">alternative=</span><span class="st">&quot;greater&quot;</span>) <span class="co">#ii. Durbin-Watson test</span></span></code></pre></div>
+</div>
+<div id="random-errors-normally-distributed" class="section level3 hasAnchor" number="1.4.3">
+<h3><span class="header-section-number">1.4.3</span> Random Errors Normally Distributed<a href="#random-errors-normally-distributed" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_assumptions_normdist </em></span></p>
+<p>Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x’s.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot has a constant spread over the range of predicted values</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nortest)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dataset, <span class="fu">aes</span>(<span class="at">sample =</span> lm.model<span class="sc">$</span>residuals)) <span class="sc">+</span> <span class="co">#i. QQ-Plot</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ad.test</span>(lm.model<span class="sc">$</span>residuals) <span class="co">#ii. Anderson-Darling test. Gives more weight to tails</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(lm.model<span class="sc">$</span>residuals) <span class="co">#iii. Shapiro-Wilk test. Better for smaller data sets</span></span></code></pre></div>
+</div>
+<div id="random-error-constant-variance" class="section level3 hasAnchor" number="1.4.4">
+<h3><span class="header-section-number">1.4.4</span> Random Error Constant Variance<a href="#random-error-constant-variance" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_assumptions_constvar </em></span></p>
+<p>Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it’s not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check to see if the below plot has a constant spread over the range of predicted values</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">fitted</span>(lm.model),<span class="at">y=</span><span class="fu">resid</span>(lm.model))) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Predicted Values&quot;</span>,<span class="at">y=</span><span class="st">&quot;Residuals&quot;</span>)</span></code></pre></div>
+</div>
+<div id="single-predictor" class="section level3 hasAnchor" number="1.4.5">
+<h3><span class="header-section-number">1.4.5</span> Single Predictor?<a href="#single-predictor" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step.</p>
+</div>
+<div id="multiple-predictors" class="section level3 hasAnchor" number="1.4.6">
+<h3><span class="header-section-number">1.4.6</span> Multiple Predictors<a href="#multiple-predictors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="check-for-multicollinearity" class="section level4 hasAnchor" number="1.4.6.1">
+<h4><span class="header-section-number">1.4.6.1</span> Check for Multicollinearity<a href="#check-for-multicollinearity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:blue;"> <em>snippet fdr_assumptions_multicol </em></span></p>
+<p>If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check for correlation among predictor variables or calculate the variance inflation factor (VIF)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#First filter dataframe to only contain numeric variables</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>dataset_num <span class="ot">=</span> dataset[,<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">82</span>)]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(dataset_num) <span class="co">#i. Correlation among predictor variables</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(lm.model) <span class="co">#ii. Variance inflation factor (VIF)</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="influential-observations-outliers" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> Influential Observations / Outliers<a href="#influential-observations-outliers" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected.</p>
+<div id="identify-influential-observations" class="section level3 hasAnchor" number="1.5.1">
+<h3><span class="header-section-number">1.5.1</span> Identify influential observations<a href="#identify-influential-observations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_influential</em></span></p>
+<ul>
+<li>Internally Studentized residuals (good for detecting outliers)</li>
+<li>Externally Studentized residuals (good for detecting outliers)</li>
+<li>Cook’s D (good for detecting influential observations)</li>
+<li>DFFITS (good for detecting influential observations)</li>
+<li>DFBETAS (good for detecting influential observations)</li>
+<li>Hat values (good for detecting influential observations)</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Tests for finding influential observations</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdp)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>n.index <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(dataset))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">length</span>(lm.model<span class="sc">$</span>coefficients)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#i. Cook&#39;s D</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>D.cut<span class="ot">=</span> <span class="dv">4</span><span class="sc">/</span>(<span class="fu">nrow</span>(dataset)<span class="sc">-</span>p<span class="dv">-1</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>c <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">cooks.distance</span>(lm.model))) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span>D.cut) <span class="sc">+</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Cook&#39;s D&quot;</span>,<span class="at">x =</span> <span class="st">&quot;Observation&quot;</span>,<span class="at">y =</span><span class="st">&quot;Cook&#39;s Distance&quot;</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#ii. DFFITS</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>df.cut<span class="ot">=</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">sqrt</span>((p)<span class="sc">/</span><span class="fu">nrow</span>(dataset)))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">dffits</span>(lm.model))) <span class="sc">+</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span>df.cut) <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span><span class="sc">-</span>df.cut) <span class="sc">+</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;DFFITS&quot;</span>,<span class="at">x=</span><span class="st">&quot;Observation&quot;</span>,<span class="at">y=</span><span class="st">&quot;DFFITS&quot;</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">#Observations that are outside of dffits</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>dataset[<span class="fu">dffits</span>(lm.model) <span class="sc">&gt;</span> df.cut <span class="sc">|</span> <span class="fu">dffits</span>(lm.model) <span class="sc">&lt;</span> <span class="sc">-</span>df.cut,]</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">#iii. DFBETAS (copy and paste for each variable)</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>db.cut<span class="ot">=</span><span class="dv">2</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">nrow</span>(dataset))</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">dfbetas</span>(lm.model)[,<span class="st">&#39;variablename&#39;</span>])) <span class="sc">+</span> </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span>db.cut) <span class="sc">+</span> </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span><span class="sc">-</span>db.cut) <span class="sc">+</span> </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;DFBETA for variablename&quot;</span>,<span class="at">x=</span><span class="st">&quot;Observation&quot;</span>,<span class="at">y=</span><span class="st">&quot;DFBETAS&quot;</span>)</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#iv. Hhat</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>hat.cut<span class="ot">=</span><span class="dv">2</span><span class="sc">*</span>(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="fu">nrow</span>(dataset)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>f <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">hatvalues</span>(lm.model))) <span class="sc">+</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">y=</span>hat.cut) <span class="sc">+</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Hat values&quot;</span>,<span class="at">x=</span><span class="st">&quot;Observation&quot;</span>,<span class="at">y=</span><span class="st">&quot;Hat Values&quot;</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#Print all plots in a grid. Add additional variables for DFBETAS if desired</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(c,d,e,f)</span></code></pre></div>
+</div>
+<div id="handle-outliers" class="section level3 hasAnchor" number="1.5.2">
+<h3><span class="header-section-number">1.5.2</span> Handle Outliers<a href="#handle-outliers" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span style="color:blue;"> <em>snippet fdr_outliers</em></span></p>
+<ol style="list-style-type: decimal">
+<li>Recheck the data to ensure that no transcription or data entry errors
+occurred.</li>
+<li>If the data is valid, one possible explanation is that
+the model is not adequate.
+<ul>
+<li>A model with higher-order terms, such as polynomials and interactions between the variables, might be necessary to fit the data well.</li>
+<li>Nonlinear model</li>
+</ul></li>
+<li>Determine the robustness of the inference bv running the analysis both with and without the influential observations.</li>
+<li>Robust Regression (Covered Later in Program)</li>
+<li>Weighted Least Squares (WCS)</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Tests for finding outliers</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdp)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>lm.model<span class="ot">=</span><span class="fu">lm</span>(targetvar<span class="sc">~</span>.,<span class="at">data=</span>dataset)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>n.index <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(dataset))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#i. Internal Studentized Residuals</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">rstandard</span>(lm.model))) <span class="sc">+</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y=</span><span class="sc">-</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Internal Studentized Residuals&quot;</span>,<span class="at">x=</span><span class="st">&quot;Observation&quot;</span>,<span class="at">y=</span><span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#ii. External Studentized Residuals</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>b <span class="ot">=</span> <span class="fu">ggplot</span>(lm.model,<span class="fu">aes</span>(<span class="at">x=</span>n.index,<span class="at">y=</span><span class="fu">rstudent</span>(lm.model)))<span class="sc">+</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y=</span><span class="sc">-</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;External Studentized Residuals&quot;</span>,<span class="at">x=</span><span class="st">&quot;Observation&quot;</span>,<span class="at">y=</span><span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(a,b)</span></code></pre></div>
+</div>
+</div>
+<div id="variable-selection" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Variable Selection<a href="#variable-selection" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><span style="color:blue;"> <em>snippet fdr_varselect_linreg</em></span></p>
+<p>When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you’re looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Create training model</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">19054</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>dataframe <span class="ot">&lt;-</span> dataframe <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>()) <span class="co">#Only necessary if data does not have id-like column</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>train <span class="ot">=</span> dataframe <span class="sc">%&gt;%</span> <span class="fu">sample_frac</span>(<span class="fl">0.7</span>) <span class="co">#70% of data points are set aside for training (can be changed)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(dataframe, train, <span class="at">by =</span> <span class="st">&#39;id&#39;</span>) <span class="co">#The remainder are assigned for testing</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>train <span class="ot">=</span> train[,<span class="fu">c</span>(colnumstovalidate)] <span class="co">#Select columns you want to analyze</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#train = train[,!(colnames(train) %in% &quot;id&quot;)] #Remove id column if not used in modeling</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create full model and empty model</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>full.model <span class="ot">=</span> <span class="fu">lm</span>(yvar <span class="sc">~</span> . , <span class="at">data =</span> train)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>empty.model <span class="ot">=</span> <span class="fu">lm</span>(yvar <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> train)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Information Criteria (InfCrit)</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#AIC: k = 2</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#BIC: k = log(nrow(train))</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#p-value: k = qchisq(alpha.f , 1, lower.tail = FALSE)</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#Create model</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#alpha.f=0.20 #Only needed for p-value calculation</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>for.model <span class="ot">=</span> <span class="fu">step</span>(empty.model, <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> empty.model, <span class="at">upper =</span> full.model), <span class="at">direction =</span> <span class="st">&quot;forward&quot;</span>, <span class="at">k =</span> InfCrit)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>back.model <span class="ot">=</span> <span class="fu">step</span>(full.model, <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> empty.model, <span class="at">upper =</span> full.model), <span class="at">direction =</span> <span class="st">&quot;backward&quot;</span>, <span class="at">k =</span> InfCrit)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>step.model <span class="ot">=</span> <span class="fu">step</span>(empty.model, <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> empty.model, <span class="at">upper =</span> full.model), <span class="at">direction =</span> <span class="st">&quot;both&quot;</span>, <span class="at">k =</span> InfCrit)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#Regularized regression for variable selection (LASSO example)</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>train_x <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(yvar <span class="sc">~</span> ., <span class="at">data =</span> train)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>train_y <span class="ot">&lt;-</span> train<span class="sc">$</span><span class="st">&#39;yvar&#39;</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>train_lasso <span class="ot">=</span> <span class="fu">glmnet</span>(<span class="at">x=</span>train_x, <span class="at">y =</span> yvar, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(train_lasso, <span class="at">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
+</div>
+<div id="model-evaluation" class="section level2 hasAnchor" number="1.7">
+<h2><span class="header-section-number">1.7</span> Model Evaluation<a href="#model-evaluation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><span style="color:blue;"> <em>snippet fdr_modeval</em></span></p>
+<p>After the variables are selected, it’s time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Evaluate various metrics for model accuracy</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>testdataset<span class="sc">$</span>pred_lm <span class="ot">&lt;-</span> <span class="fu">predict</span>(finalmodel, <span class="at">newdata =</span> testdataset)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>testdataset <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lm_APE =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">abs</span>((yvar <span class="sc">-</span> pred_lm)<span class="sc">/</span>yvar)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lm_AE =</span> <span class="fu">abs</span>(yvar <span class="sc">-</span> pred_lm)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lm_SE =</span> (yvar <span class="sc">-</span> pred_lm)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">MAPE_lm =</span> <span class="fu">mean</span>(lm_APE)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">MAE_lm =</span> <span class="fu">mean</span>(lm_AE)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">MSE_lm =</span> <span class="fu">mean</span>(lm_SE)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">RMSE_lm =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(lm_SE))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">AIC_lm =</span> <span class="fu">AIC</span>(finalmodel)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">BIC_lm =</span> <span class="fu">BIC</span>(finalmodel)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                            , <span class="at">Ra2_lm =</span> <span class="fu">summary</span>(finalmodel)<span class="sc">$</span>adj.r.squared)</span></code></pre></div>
+</div>
+<div id="summarize-findings" class="section level2 hasAnchor" number="1.8">
+<h2><span class="header-section-number">1.8</span> Summarize Findings<a href="#summarize-findings" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/smjasper3/TRTADSF/edit/master/%s",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/smjasper3/TRTADSF/blob/master/%s",
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -3,7 +3,7 @@ title: "Linear Regression"
 author: "Sam Jasper and Jackson de Oliveira"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  bookdown::gitbook:
+  bookdown::gitbook
       
 ---
 

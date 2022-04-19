@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Data Mining</title>
+  <meta name="description" content="Data Mining" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Data Mining" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Data Mining" />
+  
+  
+  
+
+<meta name="author" content="Sam Jasper, Lindsey Fisher, Surabhi Sood, Sarah Stott, and Liam Dao" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+      <script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+      <script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+      <script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+      <style type="text/css">
+      .code-folding-btn { margin-bottom: 4px; }
+      .row { display: flex; }
+      .collapse { display: none; }
+      .in { display:block }
+      .pull-right > .dropdown-menu {
+          right: 0;
+          left: auto;
+      }
+      .open > .dropdown-menu {
+          display: block;
+      }
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          z-index: 1000;
+          display: none;
+          float: left;
+          min-width: 160px;
+          padding: 5px 0;
+          margin: 2px 0 0;
+          font-size: 14px;
+          text-align: left;
+          list-style: none;
+          background-color: #fff;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          border: 1px solid rgba(0,0,0,.15);
+          border-radius: 4px;
+          -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+          box-shadow: 0 6px 12px rgba(0,0,0,.175);
+      }
+      </style>
+      <script>
+      $(document).ready(function () {
+        window.initializeCodeFolding("show" === "hide");
+      });
+      </script>
+      <script>
+document.write('<button id="backToTop"><a href="#section-" style="color: white">Back To Top</a></button>')
+</script>
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TRTADSF</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path=""><a href="#data-mining"><i class="fa fa-check"></i><b>1</b> Data Mining</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path=""><a href="#supervised"><i class="fa fa-check"></i><b>1.1</b> Supervised</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path=""><a href="#knn"><i class="fa fa-check"></i><b>1.1.1</b> KNN</a></li>
+<li class="chapter" data-level="1.1.2" data-path=""><a href="#cart-classification-and-regression-trees"><i class="fa fa-check"></i><b>1.1.2</b> CART: Classification and Regression Trees</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path=""><a href="#unsupervised"><i class="fa fa-check"></i><b>1.2</b> Unsupervised</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path=""><a href="#data-clustering"><i class="fa fa-check"></i><b>1.2.1</b> Data Clustering</a></li>
+<li class="chapter" data-level="1.2.2" data-path=""><a href="#assocation-analysis"><i class="fa fa-check"></i><b>1.2.2</b> Assocation Analysis</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Mining</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Data Mining</h1>
+<p class="author"><em>Sam Jasper, Lindsey Fisher, Surabhi Sood, Sarah Stott, and Liam Dao</em></p>
+<p class="date"><em>19 April, 2022</em></p>
+</div>
+<div id="data-mining" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Data Mining<a href="#data-mining" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="supervised" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Supervised<a href="#supervised" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="knn" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> KNN<a href="#knn" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="choose-k" class="section level4 hasAnchor" number="1.1.1.1">
+<h4><span class="header-section-number">1.1.1.1</span> Choose K<a href="#choose-k" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.</p>
+</div>
+<div id="measuring-distance" class="section level4 hasAnchor" number="1.1.1.2">
+<h4><span class="header-section-number">1.1.1.2</span> Measuring Distance<a href="#measuring-distance" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.</p>
+</div>
+<div id="classificationprediction-rules" class="section level4 hasAnchor" number="1.1.1.3">
+<h4><span class="header-section-number">1.1.1.3</span> Classification/Prediction Rules<a href="#classificationprediction-rules" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The output or value of a new observation is based on the nearest neighbors of the new observation. However, there are many different ways to have those neighbors define the new observation.</p>
+<p><strong>Classification:</strong> majority rules is the most common classification rule, with the most frequent target outcome value within the nearest neighbors being used to determine the classification. If using this method, it is best to set an odd k value such that there are no ties in voting (if there are two classes). Another example for a classification rule is weighting the vote by the nearness of the neighbor. Alternatively, the user can set another rule if it is expected to fit the data better.</p>
+<p><strong>Prediction:</strong> common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.</p>
+</div>
+<div id="assumptions-and-other-notes" class="section level4 hasAnchor" number="1.1.1.4">
+<h4><span class="header-section-number">1.1.1.4</span> Assumptions and Other Notes<a href="#assumptions-and-other-notes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
+<p>In order to run KNN in R, all categorical variables must first be converted into numeric variables.</p>
+</div>
+</div>
+<div id="cart-classification-and-regression-trees" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> CART: Classification and Regression Trees<a href="#cart-classification-and-regression-trees" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="data-processing" class="section level4 hasAnchor" number="1.1.2.1">
+<h4><span class="header-section-number">1.1.2.1</span> Data Processing<a href="#data-processing" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Decision trees can handle categorical, continuous, and discrete data. However, ordinal variables tend to be treated as continuous to preserve the importance of order. Decision trees can also handle missing values by setting those values as a “missing” category.</p>
+<p>Before building the model, create separate train and test datasets (a validation dataset is optional). The decision tree will be trained on the training dataset and evaluated on the test dataset.</p>
+</div>
+<div id="choosing-best-splits" class="section level4 hasAnchor" number="1.1.2.2">
+<h4><span class="header-section-number">1.1.2.2</span> Choosing Best Splits<a href="#choosing-best-splits" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><strong>Classification:</strong> maximizing purity is the determining factor in identifying the best splits within classification trees. Purity measures how homogeneous the nodes are following split points. Most commonly, Gini and Entropy are used as measures of impurity to calculate the best splits.</p>
+<p><strong>Regression:</strong> minimizing SSE (Sum of Squared Errors) determines the splits within the tree.</p>
+</div>
+<div id="model-building-and-predictions" class="section level4 hasAnchor" number="1.1.2.3">
+<h4><span class="header-section-number">1.1.2.3</span> Model Building and Predictions<a href="#model-building-and-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.</p>
+<p>In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.</p>
+</div>
+<div id="evaluation" class="section level4 hasAnchor" number="1.1.2.4">
+<h4><span class="header-section-number">1.1.2.4</span> Evaluation<a href="#evaluation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.</p>
+</div>
+<div id="pruning-and-tuning" class="section level4 hasAnchor" number="1.1.2.5">
+<h4><span class="header-section-number">1.1.2.5</span> Pruning and Tuning<a href="#pruning-and-tuning" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.</p>
+<p>After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.</p>
+</div>
+</div>
+</div>
+<div id="unsupervised" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Unsupervised<a href="#unsupervised" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="data-clustering" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Data Clustering<a href="#data-clustering" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Clustering allows groups to be found within a dataset. It is unsupervised, so we do not know which group an observation belongs to in advance.</p>
+<p>Evaluating cluster results is nontrivial as the target variable is not known. However, the Silhouette Coefficient and Dunn’s Index are two evaluation options. More information can be found <a href="https://www.analyticsvidhya.com/blog/2020/10/quick-guide-to-evaluation-metrics-for-supervised-and-unsupervised-machine-learning/">here</a>.</p>
+<p>Hard clustering means each observation can only belong to one cluster. Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.</p>
+<div id="hard" class="section level4 hasAnchor" number="1.2.1.1">
+<h4><span class="header-section-number">1.2.1.1</span> Hard<a href="#hard" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Hard clustering assigns each observation to only one cluster.</p>
+<p>Flat and hierarchical are two types of hard clustering. Flat clustering methods require a resolution parameter, while hierarchical clustering methods do not need a resolution parameter (which will be determined automatically).</p>
+<div id="flat" class="section level5 hasAnchor" number="1.2.1.1.1">
+<h5><span class="header-section-number">1.2.1.1.1</span> Flat<a href="#flat" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Flat clustering is a type of hard clustering, meaning each observation can only belong to one cluster. Flat clustering requires a resolution parameter, such as how many clusters to create (k) or step size (epsilon).</p>
+<div id="k-means" class="section level6 hasAnchor" number="1.2.1.1.1.1">
+<h6><span class="header-section-number">1.2.1.1.1.1</span> K-means<a href="#k-means" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p>K-means is a type of hard clustering, meaning each observation can only belong to one cluster. It is also flat rather than hierarchical so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).</p>
+<p>K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
+<p>The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#standard scaling of data in data mining</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scale</span>(dataset)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#min-max scaling of data in data mining</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BBmisc)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">normalize</span>(dataset)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># methodologies to find optimal number of clusters - </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#to find optimal number of clusters</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#if r throws an error for generating the plot</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">dev.list</span>()))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># method : silhouette, wss method</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># k.max : integer value, number of clusters</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(scaled_data, kmeans, <span class="at">method=</span><span class="st">&quot;method&quot;</span>,<span class="at">k.max=</span>num)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#creating clusters with centers obtains from silhoutte/wss/business context</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#centers and nstart - integer value</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cluster <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(scaled_data, <span class="at">centers=</span>scaled_data, <span class="at">nstart=</span><span class="dv">5</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#plotting the clusters</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">dev.list</span>()))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>() <span class="co">#use if r throws error while displaying the plot</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(Cluster_wss, <span class="at">data =</span> scaled_data)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#summarizing the clusters with respect to the original dataset</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>profile.kmeans <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data,cluster_wss<span class="sc">$</span>cluster) </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>all.k <span class="ot">&lt;-</span> profile.kmeans <span class="sc">%&gt;%</span> </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster_wss<span class="sc">$</span>cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean.Channel=</span><span class="fu">mean</span>(Channel),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Region=</span><span class="fu">mean</span>(Region),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Fresh=</span><span class="fu">mean</span>(Fresh),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Milk=</span><span class="fu">mean</span>(Milk),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Grocery=</span><span class="fu">mean</span>(Grocery),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Frozen=</span><span class="fu">mean</span>(Frozen),</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Detergents_Paper=</span><span class="fu">mean</span>(Detergents_Paper),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Delicassen=</span><span class="fu">mean</span>(Delicassen))</span></code></pre></div>
+</div>
+<div id="dbscan" class="section level6 hasAnchor" number="1.2.1.1.1.2">
+<h6><span class="header-section-number">1.2.1.1.1.2</span> DBSCAN<a href="#dbscan" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p>DBSCAN is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of flat clustering because epsilon needs to be specified, which the algorithm will pick automatically. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.</p>
+<p>Unlike k-means, it is a spatial clustering algorithm, which clusters based on a distance matrix.</p>
+<p>A downside to DBSCAN is that since it is a spatial clustering algorithm, it can confuse semantic meanings when the observations occupy the same space. For this reason, it is a good idea to plot the data first to see if clustering spatially is a good option.</p>
+</div>
+</div>
+<div id="hierarchical" class="section level5 hasAnchor" number="1.2.1.1.2">
+<h5><span class="header-section-number">1.2.1.1.2</span> Hierarchical<a href="#hierarchical" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.</p>
+<div id="agglomerative" class="section level6 hasAnchor" number="1.2.1.1.2.1">
+<h6><span class="header-section-number">1.2.1.1.2.1</span> Agglomerative<a href="#agglomerative" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p>Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
+<p>Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.</p>
+<p>Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
+<p>Use a dendrogram to visualize.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># hierarchical clustering and visualization through agnes</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dist.matrix <span class="ot">&lt;-</span> <span class="fu">dist</span>(scaled_data, <span class="at">method=</span><span class="st">&quot;method&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># method - Average, Single, Ward, Weighted </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>h1.comp.eucl<span class="ot">=</span><span class="fu">agnes</span>(dist.matrix,<span class="at">method=</span><span class="st">&quot;method&quot;</span>) </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the tree</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(h1.comp.eucl, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Dendrogram of agnes&quot;</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#agglomerative coefficient</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>h1.comp.eucl </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># use a value of k for stopping the dendogram </span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>cut_avg <span class="ot">&lt;-</span> <span class="fu">cutree</span>(h1.comp.eucl, <span class="at">k=</span>num)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the clusters with colors</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>avg_dend_obj <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(h1.comp.eucl)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>avg_col_dend <span class="ot">&lt;-</span> <span class="fu">color_branches</span>(avg_dend_obj,<span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(avg_col_dend)</span></code></pre></div>
+</div>
+<div id="divisive" class="section level6 hasAnchor" number="1.2.1.1.2.2">
+<h6><span class="header-section-number">1.2.1.1.2.2</span> Divisive<a href="#divisive" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p>Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
+<p>Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).</p>
+<p>Use a dendrogram to visualize.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># hierarchical clustering and visualization through Diana</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hc4 <span class="ot">&lt;-</span> <span class="fu">diana</span>(scaled_data)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>hc4</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the tree</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(hc4, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Dendrogram of diana&quot;</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc4, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(hc4, <span class="at">hang=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">cex =</span> <span class="fl">0.6</span>,<span class="at">main =</span><span class="st">&quot;Dendrogram of diana&quot;</span> )</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc4, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="fuzzy" class="section level4 hasAnchor" number="1.2.1.2">
+<h4><span class="header-section-number">1.2.1.2</span> Fuzzy<a href="#fuzzy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.</p>
+<div id="fcm" class="section level5 hasAnchor" number="1.2.1.2.1">
+<h5><span class="header-section-number">1.2.1.2.1</span> FCM<a href="#fcm" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Fuzzy c-means clustering (FCM) is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. The number of clusters and iterations need to be specified.</p>
+<p>It randomly assigns observations to clusters initially and then corrects clusters with each iteration to minimize error.</p>
+<p>More information on FCM can be found <a href="https://www.datanovia.com/en/lessons/fuzzy-clustering-essentials/fuzzy-c-means-clustering-algorithm/">here</a>.</p>
+</div>
+<div id="gmm" class="section level5 hasAnchor" number="1.2.1.2.2">
+<h5><span class="header-section-number">1.2.1.2.2</span> GMM<a href="#gmm" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. If using Gaussian rather than frequentist analytic approaches, these probabilities can serve at the posterior distribution.</p>
+<p>GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.</p>
+<p>A downside is that GMM may not converge if there are not enough representatives from each cluster.</p>
+<p>More information on GMM can be found <a href="https://www.mathworks.com/help/stats/clustering-using-gaussian-mixture-models.html">here</a>.</p>
+</div>
+</div>
+</div>
+<div id="assocation-analysis" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> Assocation Analysis<a href="#assocation-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="data-processing-1" class="section level4 hasAnchor" number="1.2.2.1">
+<h4><span class="header-section-number">1.2.2.1</span> Data Processing<a href="#data-processing-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To conduct association analysis, transactional data must be provided in a wide format.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># id - any unique column in the dataset</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># description - list of products</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>trans.data <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">split</span>(dataset, dataset), <span class="st">&quot;transactions&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(trans.data)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing the top products</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># type=&quot;relative&quot;,&quot;absolute&quot;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">itemFrequencyPlot</span>(trans.data, </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="at">topN=</span><span class="dv">10</span>, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="at">type=</span><span class="st">&quot;absolute&quot;</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="at">col=</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&#39;Pastel2&#39;</span>), </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">&quot;Absolute Item Frequency Plot&quot;</span>)</span></code></pre></div>
+</div>
+<div id="finding-association-rules" class="section level4 hasAnchor" number="1.2.2.2">
+<h4><span class="header-section-number">1.2.2.2</span> Finding Association Rules<a href="#finding-association-rules" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Mining the rules </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>association.rules <span class="ot">&lt;-</span> <span class="fu">apriori</span>(transactional_data, <span class="at">parameter =</span> <span class="fu">list</span>(<span class="at">supp=</span><span class="fl">0.001</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">conf=</span><span class="fl">0.8</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">maxlen=</span><span class="dv">10</span>))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(association.rules)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing rules in the form of a table</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>rules.table <span class="ot">&lt;-</span> <span class="fu">inspect</span>(association.rules[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rules.table)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;direction&quot;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>rules.table <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(lift)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(lhs,rhs,lift,confidence,count)</span></code></pre></div>
+</div>
+<div id="assessing-association-rule-strength" class="section level4 hasAnchor" number="1.2.2.3">
+<h4><span class="header-section-number">1.2.2.3</span> Assessing Association Rule Strength<a href="#assessing-association-rule-strength" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>There are three main statistics in measuring the strength of an association rule:
+1) <strong>Support:</strong> the probability of seeing these items together.
+2) <strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)
+3) <strong>Lift:</strong> how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#rule for a particular product</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>product.rule  <span class="ot">=</span> <span class="fu">apriori</span>(transactional_data, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">parameter =</span> <span class="fu">list</span>(<span class="at">supp=</span><span class="fl">0.001</span>, <span class="at">conf=</span><span class="fl">0.7</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="at">appearance =</span> <span class="fu">list</span>(<span class="at">default=</span><span class="st">&quot;lhs&quot;</span>,<span class="at">rhs=</span><span class="st">&quot;Product&quot;</span>))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>product.rule.table <span class="ot">&lt;-</span> <span class="fu">inspect</span>(product.rule)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(product.rule.table)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;direction&quot;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing rules in the form of a table</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>product.rule.table <span class="sc">%&gt;%</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(lift)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(lhs,rhs,lift,confidence,count)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Interactive graphs</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#by: confidence, lift , support</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>top10Rules <span class="ot">&lt;-</span> <span class="fu">head</span>(association.rules, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">by =</span> <span class="st">&quot;confidence&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(top10Rules, <span class="at">method =</span> <span class="st">&quot;graph&quot;</span>,  <span class="at">engine =</span> <span class="st">&quot;htmlwidget&quot;</span>)</span></code></pre></div>
+</div>
+<div id="miscellaneous-notes" class="section level4 hasAnchor" number="1.2.2.4">
+<h4><span class="header-section-number">1.2.2.4</span> Miscellaneous Notes<a href="#miscellaneous-notes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.</p>
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/smjasper3/TRTADSF/edit/master/%s",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/smjasper3/TRTADSF/blob/master/%s",
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

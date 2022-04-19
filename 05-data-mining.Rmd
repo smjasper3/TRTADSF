@@ -3,7 +3,7 @@ title: "Data Mining"
 author: "Sam Jasper, Lindsey Fisher, Surabhi Sood, Sarah Stott, and Liam Dao"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  bookdown::gitbook:
+  bookdown::gitbook
       
 ---
 
@@ -91,6 +91,60 @@ K-means requires continuous variables, so all categorical variables must first b
 
 The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE. 
 
+```{r fdr_dm_scal, eval=FALSE}
+
+#standard scaling of data in data mining
+library(base)
+scale(dataset)
+
+#min-max scaling of data in data mining
+library(BBmisc)
+normalize(dataset)
+      
+```
+
+```{r fdr_dm_clusters, eval=FALSE}
+
+# methodologies to find optimal number of clusters - 
+library(factoextra)
+#to find optimal number of clusters
+set.seed(12345)
+#if r throws an error for generating the plot
+while(!is.null(dev.list()))
+dev.off()
+# method : silhouette, wss method
+# k.max : integer value, number of clusters
+fviz_nbclust(scaled_data, kmeans, method="method",k.max=num)
+```
+
+
+```{r fdr_dm_k_Means, eval=FALSE}
+library(stats)
+library(factoextra)
+#creating clusters with centers obtains from silhoutte/wss/business context
+#centers and nstart - integer value
+cluster <- kmeans(scaled_data, centers=scaled_data, nstart=5)
+
+#plotting the clusters
+while(!is.null(dev.list()))
+dev.off() #use if r throws error while displaying the plot
+fviz_cluster(Cluster_wss, data = scaled_data)
+
+#summarizing the clusters with respect to the original dataset
+profile.kmeans <- cbind(data,cluster_wss$cluster) 
+all.k <- profile.kmeans %>% 
+  group_by(cluster_wss$cluster) %>%
+  summarise(mean.Channel=mean(Channel),
+            mean.Region=mean(Region),
+            mean.Fresh=mean(Fresh),
+            mean.Milk=mean(Milk),
+            mean.Grocery=mean(Grocery),
+            mean.Frozen=mean(Frozen),
+            mean.Detergents_Paper=mean(Detergents_Paper),
+            mean.Delicassen=mean(Delicassen))
+
+```
+
 ###### DBSCAN
 DBSCAN  is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of flat clustering because epsilon needs to be specified, which the algorithm will pick automatically. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.
 
@@ -110,12 +164,57 @@ Agglomerative clustering requires continuous variables, so all categorical varia
 
 Use a dendrogram to visualize.
 
+```{r fdr_dm_agglomerative, eval=FALSE}
+
+library(stats)
+library(cluster)
+library(dendextend)
+# hierarchical clustering and visualization through agnes
+# method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski
+dist.matrix <- dist(scaled_data, method="method")
+
+# method - Average, Single, Ward, Weighted 
+h1.comp.eucl=agnes(dist.matrix,method="method") 
+
+# plotting the tree
+pltree(h1.comp.eucl, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
+
+#agglomerative coefficient
+h1.comp.eucl 
+
+# use a value of k for stopping the dendogram 
+cut_avg <- cutree(h1.comp.eucl, k=num)
+
+#visualizing the clusters with colors
+avg_dend_obj <- as.dendrogram(h1.comp.eucl)
+avg_col_dend <- color_branches(avg_dend_obj,k = 5)
+plot(avg_col_dend)
+```
+
+
 ###### Divisive
 Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.
 
 Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
 
 Use a dendrogram to visualize.
+
+```{r fdr_dm_divisive, eval=FALSE}
+
+library(stats)
+library(cluster)
+# hierarchical clustering and visualization through Diana
+hc4 <- diana(scaled_data)
+hc4
+
+# plotting the tree
+pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+clust <- cutree(hc4, k = 5)
+
+pltree(hc4, hang=-1, cex = 0.6,main ="Dendrogram of diana" )
+rect.hclust(hc4, k = 5, border = 2:10)
+
+```
 
 #### Fuzzy
 Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.
@@ -141,14 +240,83 @@ More information on GMM can be found [here](https://www.mathworks.com/help/stats
 #### Data Processing
 To conduct association analysis, transactional data must be provided in a wide format.
 
+```{r fdr_dm_transactional_dataset, eval=FALSE}
+
+library(arules)
+library(base)
+library(RColorBrewer)
+
+# id - any unique column in the dataset
+# description - list of products
+trans.data <- as(split(dataset, dataset), "transactions")
+inspect(trans.data)
+
+# visualizing the top products
+# type="relative","absolute"
+itemFrequencyPlot(trans.data, 
+topN=10, 
+type="absolute",
+col=brewer.pal(8,'Pastel2'), 
+main="Absolute Item Frequency Plot")
+
+```
+
 #### Finding Association Rules
 There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.
+
+```{r fdr_dm_mining_rules, eval=FALSE}
+
+library(arules)
+library(tidyverse)
+
+#Mining the rules 
+association.rules <- apriori(transactional_data, parameter = list(supp=0.001, 
+conf=0.8,
+maxlen=10))
+
+summary(association.rules)
+
+# visualizing rules in the form of a table
+rules.table <- inspect(association.rules[1:10])
+colnames(rules.table)[2] <- "direction"
+rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
+
+```
 
 #### Assessing Association Rule Strength
 There are three main statistics in measuring the strength of an association rule:
 1) __Support:__ the probability of seeing these items together.
 2) __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
 3) __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
+
+```{r fdr_dm_product_mining_rule, eval=FALSE}
+
+library(arules)
+library(tidyverse)
+
+#rule for a particular product
+product.rule  = apriori(transactional_data, 
+parameter = list(supp=0.001, conf=0.7),
+appearance = list(default="lhs",rhs="Product"))
+
+product.rule.table <- inspect(product.rule)
+colnames(product.rule.table)[2] <- "direction"
+
+# visualizing rules in the form of a table
+product.rule.table %>% 
+  arrange(desc(lift)) %>% 
+  select(lhs,rhs,lift,confidence,count)
+```
+
+```{r fdr_dm_interactive_graph, eval=FALSE}
+
+#Interactive graphs
+#by: confidence, lift , support
+top10Rules <- head(association.rules, n = 10, by = "confidence")
+plot(top10Rules, method = "graph",  engine = "htmlwidget")
+
+```
+
 
 #### Miscellaneous Notes
 There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.
