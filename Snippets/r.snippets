@@ -352,15 +352,6 @@ snippet fdr_dm_K_Means
 	dev.off() #use if r throws error while displaying the plot
 	fviz_cluster(Cluster_wss, data = ${1:scaled_data})
 	
-snippet fdr_dm_cluster_insight
-	library(tidyverse)
-	#summarizing clusters going back to the origionall data
-	profile.kmeans <- cbind(${1:dataset},cluster$cluster)
-	all.k <- profile.kmeans %>%
-			group_by(cluster$cluster) %>%
-			summarise(col1 = mean(col1),
-								col2 = mean(col2),
-								col3 = mean(col3))
 								
 snippet fdr_dm_agglomerative
 	library(stats)
