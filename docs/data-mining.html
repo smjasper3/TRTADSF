@@ -601,6 +601,70 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 
 
 
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -699,7 +763,27 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 <h3><span class="header-section-number">5.1.1</span> KNN</h3>
 <div id="choose-k" class="section level4" number="5.1.1.1">
 <h4><span class="header-section-number">5.1.1.1</span> Choose K</h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_ktune </em></span></p>
 <p>The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data-mining.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb1-2"><a href="data-mining.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="data-mining.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb1-4"><a href="data-mining.html#cb1-4" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">=</span> <span class="fu">expand.grid</span>(<span class="at">k =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)) <span class="co">#Can adjust the range of k if needed</span></span>
+<span id="cb1-5"><a href="data-mining.html#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="data-mining.html#cb1-6" aria-hidden="true" tabindex="-1"></a>tuned_knn <span class="ot">=</span> caret<span class="sc">::</span><span class="fu">train</span>(<span class="fu">factor</span>(ResponseVariable) <span class="sc">~</span>., <span class="at">method=</span> <span class="st">&quot;knn&quot;</span>,</span>
+<span id="cb1-7"><a href="data-mining.html#cb1-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> <span class="fu">subset</span>(train, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(Column1ToExclude, Column2ToExclude)),</span>
+<span id="cb1-8"><a href="data-mining.html#cb1-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb1-9"><a href="data-mining.html#cb1-9" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">number =</span> <span class="dv">3</span>,</span>
+<span id="cb1-10"><a href="data-mining.html#cb1-10" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">search =</span> <span class="st">&quot;grid&quot;</span>),</span>
+<span id="cb1-11"><a href="data-mining.html#cb1-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">tuneGrid =</span> grid)</span>
+<span id="cb1-12"><a href="data-mining.html#cb1-12" aria-hidden="true" tabindex="-1"></a>tuned_knn<span class="sc">$</span>results</span>
+<span id="cb1-13"><a href="data-mining.html#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="data-mining.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot results to determine which k maximizes accuracy</span></span>
+<span id="cb1-15"><a href="data-mining.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tuned_knn<span class="sc">$</span>results, <span class="fu">aes</span>(<span class="at">x=</span>k, <span class="at">y=</span>Accuracy)) <span class="sc">+</span></span>
+<span id="cb1-16"><a href="data-mining.html#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span>
+<span id="cb1-17"><a href="data-mining.html#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="data-mining.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#The following line of code works as well</span></span>
+<span id="cb1-19"><a href="data-mining.html#cb1-19" aria-hidden="true" tabindex="-1"></a>tuned_knn<span class="sc">$</span>results[<span class="fu">which.max</span>(tuned_knn<span class="sc">$</span>results<span class="sc">$</span>Accuracy),]</span></code></pre></div>
 </div>
 <div id="measuring-distance" class="section level4" number="5.1.1.2">
 <h4><span class="header-section-number">5.1.1.2</span> Measuring Distance</h4>
@@ -713,8 +797,19 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 </div>
 <div id="assumptions-and-other-notes" class="section level4" number="5.1.1.4">
 <h4><span class="header-section-number">5.1.1.4</span> Assumptions and Other Notes</h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_knn </em></span></p>
 <p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
 <p>In order to run KNN in R, all categorical variables must first be converted into numeric variables.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="data-mining.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Running KNN requires specifying:</span></span>
+<span id="cb2-2"><a href="data-mining.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## (1) train.x: Training predictor variable(s) values</span></span>
+<span id="cb2-3"><a href="data-mining.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="do">## (2) test.x: Test predictor variable(s) values</span></span>
+<span id="cb2-4"><a href="data-mining.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## (3) train.y: Training response variable values</span></span>
+<span id="cb2-5"><a href="data-mining.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="do">## (4) k: Number of clusters</span></span>
+<span id="cb2-6"><a href="data-mining.html#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(class)</span>
+<span id="cb2-7"><a href="data-mining.html#cb2-7" aria-hidden="true" tabindex="-1"></a>predict.test<span class="ot">=</span>class<span class="sc">::</span><span class="fu">knn</span>(train.x,test.x,train.y,<span class="at">k=</span>NumberOfClusters)</span>
+<span id="cb2-8"><a href="data-mining.html#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="data-mining.html#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Determine misclassification rate</span></span>
+<span id="cb2-10"><a href="data-mining.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(predict.test <span class="sc">!=</span> train.y)<span class="sc">/</span><span class="fu">length</span>(train.y)</span></code></pre></div>
 </div>
 </div>
 <div id="cart-classification-and-regression-trees" class="section level3" number="5.1.2">
@@ -731,17 +826,94 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 </div>
 <div id="model-building-and-predictions" class="section level4" number="5.1.2.3">
 <h4><span class="header-section-number">5.1.2.3</span> Model Building and Predictions</h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_classtree </em></span></p>
+<p><span style="color:blue;"> <em>snippet fdr_dm_regtree </em></span></p>
 <p>After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.</p>
 <p>In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data-mining.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Creates a classification tree</span></span>
+<span id="cb3-2"><a href="data-mining.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb3-3"><a href="data-mining.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb3-4"><a href="data-mining.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-5"><a href="data-mining.html#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="data-mining.html#cb3-6" aria-hidden="true" tabindex="-1"></a>BC.tree <span class="ot">=</span> <span class="fu">rpart</span>(ResponseVariable <span class="sc">~</span> . , <span class="at">data =</span> train, <span class="at">method =</span> <span class="st">&#39;class&#39;</span>,</span>
+<span id="cb3-7"><a href="data-mining.html#cb3-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">parms =</span> <span class="fu">list</span>(<span class="at">split=</span><span class="st">&#39;gini&#39;</span>)) <span class="do">## or &#39;information&#39;</span></span>
+<span id="cb3-8"><a href="data-mining.html#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(BC.tree)</span>
+<span id="cb3-9"><a href="data-mining.html#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="data-mining.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Print the actual tree</span></span>
+<span id="cb3-11"><a href="data-mining.html#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC.tree)</span>
+<span id="cb3-12"><a href="data-mining.html#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(BC.tree)</span>
+<span id="cb3-13"><a href="data-mining.html#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="data-mining.html#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Variable importance</span></span>
+<span id="cb3-15"><a href="data-mining.html#cb3-15" aria-hidden="true" tabindex="-1"></a>BC.tree<span class="sc">$</span>variable.importance</span>
+<span id="cb3-16"><a href="data-mining.html#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="data-mining.html#cb3-17" aria-hidden="true" tabindex="-1"></a>varimp.data <span class="ot">=</span> <span class="fu">data.frame</span>(BC.tree<span class="sc">$</span>variable.importance)</span>
+<span id="cb3-18"><a href="data-mining.html#cb3-18" aria-hidden="true" tabindex="-1"></a>varimp.data<span class="sc">$</span>names <span class="ot">=</span> <span class="fu">as.character</span>(<span class="fu">rownames</span>(varimp.data))</span>
+<span id="cb3-19"><a href="data-mining.html#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="data-mining.html#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> varimp.data,<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_reorder</span>(names,BC.tree<span class="sc">$</span>variable.importance), <span class="at">y =</span> BC.tree<span class="sc">$</span>variable.importance)) <span class="sc">+</span></span>
+<span id="cb3-21"><a href="data-mining.html#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-22"><a href="data-mining.html#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb3-23"><a href="data-mining.html#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Variable Name&quot;</span>,<span class="at">y=</span><span class="st">&quot;Variable Importance&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="data-mining.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb4-2"><a href="data-mining.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb4-3"><a href="data-mining.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-4"><a href="data-mining.html#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="data-mining.html#cb4-5" aria-hidden="true" tabindex="-1"></a>R.tree <span class="ot">=</span> <span class="fu">rpart</span>(ResponseVariable <span class="sc">~</span> . , <span class="at">data =</span> train</span>
+<span id="cb4-6"><a href="data-mining.html#cb4-6" aria-hidden="true" tabindex="-1"></a>              , <span class="at">method =</span> <span class="st">&#39;anova&#39;</span> <span class="co">#Regression tree</span></span>
+<span id="cb4-7"><a href="data-mining.html#cb4-7" aria-hidden="true" tabindex="-1"></a>              , <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">minsplit =</span> <span class="dv">10</span>)) <span class="co">#the minimum number of observations that must exist in a node in order for a split to be attempted.</span></span>
+<span id="cb4-8"><a href="data-mining.html#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(R.tree)</span>
+<span id="cb4-9"><a href="data-mining.html#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">printcp</span>(R.tree)</span>
+<span id="cb4-10"><a href="data-mining.html#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="data-mining.html#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Print the actual tree</span></span>
+<span id="cb4-12"><a href="data-mining.html#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(R.tree)</span>
+<span id="cb4-13"><a href="data-mining.html#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(R.tree)</span>
+<span id="cb4-14"><a href="data-mining.html#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="data-mining.html#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Variable importance</span></span>
+<span id="cb4-16"><a href="data-mining.html#cb4-16" aria-hidden="true" tabindex="-1"></a>R.tree<span class="sc">$</span>variable.importance</span>
+<span id="cb4-17"><a href="data-mining.html#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="data-mining.html#cb4-18" aria-hidden="true" tabindex="-1"></a>varimp.data <span class="ot">=</span> <span class="fu">data.frame</span>(R.tree<span class="sc">$</span>variable.importance)</span>
+<span id="cb4-19"><a href="data-mining.html#cb4-19" aria-hidden="true" tabindex="-1"></a>varimp.data<span class="sc">$</span>names <span class="ot">=</span> <span class="fu">as.character</span>(<span class="fu">rownames</span>(varimp.data))</span>
+<span id="cb4-20"><a href="data-mining.html#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="data-mining.html#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> varimp.data,<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_reorder</span>(names,R.tree<span class="sc">$</span>variable.importance), <span class="at">y =</span> R.tree<span class="sc">$</span>variable.importance)) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="data-mining.html#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="data-mining.html#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb4-24"><a href="data-mining.html#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Variable Name&quot;</span>,<span class="at">y=</span><span class="st">&quot;Variable Importance&quot;</span>)</span></code></pre></div>
 </div>
 <div id="evaluation" class="section level4" number="5.1.2.4">
 <h4><span class="header-section-number">5.1.2.4</span> Evaluation</h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_evaluation </em></span></p>
 <p>Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data-mining.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Classification Evaluation metrics</span></span>
+<span id="cb5-2"><a href="data-mining.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Use CART model to predict new values for train and test datasets</span></span>
+<span id="cb5-3"><a href="data-mining.html#cb5-3" aria-hidden="true" tabindex="-1"></a>trainscores <span class="ot">=</span> <span class="fu">predict</span>(ClassificationTreeVariable, <span class="at">type=</span><span class="st">&#39;class&#39;</span>) <span class="co">#Class for classification trees; vector for regression trees</span></span>
+<span id="cb5-4"><a href="data-mining.html#cb5-4" aria-hidden="true" tabindex="-1"></a>testscores <span class="ot">=</span> <span class="fu">predict</span>(ClassificationTreeVariable, test, <span class="at">type=</span><span class="st">&#39;class&#39;</span>)</span>
+<span id="cb5-5"><a href="data-mining.html#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="data-mining.html#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Training/testing misclassification rate:</span></span>
+<span id="cb5-7"><a href="data-mining.html#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(trainscores<span class="sc">!=</span>train<span class="sc">$</span>ResponseVariable)<span class="sc">/</span><span class="fu">nrow</span>(train)</span>
+<span id="cb5-8"><a href="data-mining.html#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(testscores<span class="sc">!=</span>test<span class="sc">$</span>ResponseVariable)<span class="sc">/</span><span class="fu">nrow</span>(test)</span>
+<span id="cb5-9"><a href="data-mining.html#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="data-mining.html#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Regression Evaluation metrics</span></span>
+<span id="cb5-11"><a href="data-mining.html#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Use CART regression model to predict new values for train and test datasets</span></span>
+<span id="cb5-12"><a href="data-mining.html#cb5-12" aria-hidden="true" tabindex="-1"></a>trainscores <span class="ot">=</span> <span class="fu">predict</span>(RegressionTreeVariable, <span class="at">type=</span><span class="st">&#39;vector&#39;</span>) <span class="co">#Class for classification trees; vector for regression trees</span></span>
+<span id="cb5-13"><a href="data-mining.html#cb5-13" aria-hidden="true" tabindex="-1"></a>testscores <span class="ot">=</span> <span class="fu">predict</span>(RegressionTreeVariable, test, <span class="at">type=</span><span class="st">&#39;vector&#39;</span>)</span>
+<span id="cb5-14"><a href="data-mining.html#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="data-mining.html#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Training/testing MAE and MAPE (regression):</span></span>
+<span id="cb5-16"><a href="data-mining.html#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(trainscores<span class="sc">-</span>train<span class="sc">$</span>ResponseVariable))</span>
+<span id="cb5-17"><a href="data-mining.html#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>((trainscores<span class="sc">-</span>train<span class="sc">$</span>ResponseVariable)<span class="sc">/</span>train<span class="sc">$</span>ResponseVariable))</span>
+<span id="cb5-18"><a href="data-mining.html#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="data-mining.html#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(testscores<span class="sc">-</span>test<span class="sc">$</span>ResponseVariable))</span>
+<span id="cb5-20"><a href="data-mining.html#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>((testscores<span class="sc">-</span>test<span class="sc">$</span>ResponseVariable)<span class="sc">/</span>test<span class="sc">$</span>ResponseVariable))</span></code></pre></div>
 </div>
 <div id="pruning-and-tuning" class="section level4" number="5.1.2.5">
 <h4><span class="header-section-number">5.1.2.5</span> Pruning and Tuning</h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_prunetree </em></span></p>
 <p>Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.</p>
 <p>After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="data-mining.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Visualize cp values</span></span>
+<span id="cb6-2"><a href="data-mining.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(TreeVariable)  </span>
+<span id="cb6-3"><a href="data-mining.html#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="data-mining.html#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Prune tree based on cp value</span></span>
+<span id="cb6-5"><a href="data-mining.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  pruned.tree<span class="ot">&lt;-</span><span class="fu">prune</span>(TreeVariable,<span class="at">cp=</span><span class="fl">0.05</span>)</span>
+<span id="cb6-6"><a href="data-mining.html#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">printcp</span>(pruned.tree)</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -764,6 +936,46 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 <p>K-means is a type of hard clustering, meaning each observation can only belong to one cluster. It is also flat rather than hierarchical so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).</p>
 <p>K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
 <p>The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="data-mining.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#standard scaling of data in data mining</span></span>
+<span id="cb7-2"><a href="data-mining.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
+<span id="cb7-3"><a href="data-mining.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scale</span>(dataset)</span>
+<span id="cb7-4"><a href="data-mining.html#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="data-mining.html#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#min-max scaling of data in data mining</span></span>
+<span id="cb7-6"><a href="data-mining.html#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BBmisc)</span>
+<span id="cb7-7"><a href="data-mining.html#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">normalize</span>(dataset)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="data-mining.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># methodologies to find optimal number of clusters - </span></span>
+<span id="cb8-2"><a href="data-mining.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb8-3"><a href="data-mining.html#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#to find optimal number of clusters</span></span>
+<span id="cb8-4"><a href="data-mining.html#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb8-5"><a href="data-mining.html#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#if r throws an error for generating the plot</span></span>
+<span id="cb8-6"><a href="data-mining.html#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">dev.list</span>()))</span>
+<span id="cb8-7"><a href="data-mining.html#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb8-8"><a href="data-mining.html#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># method : silhouette, wss method</span></span>
+<span id="cb8-9"><a href="data-mining.html#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># k.max : integer value, number of clusters</span></span>
+<span id="cb8-10"><a href="data-mining.html#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(scaled_data, kmeans, <span class="at">method=</span><span class="st">&quot;method&quot;</span>,<span class="at">k.max=</span>num)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="data-mining.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb9-2"><a href="data-mining.html#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb9-3"><a href="data-mining.html#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#creating clusters with centers obtains from silhoutte/wss/business context</span></span>
+<span id="cb9-4"><a href="data-mining.html#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#centers and nstart - integer value</span></span>
+<span id="cb9-5"><a href="data-mining.html#cb9-5" aria-hidden="true" tabindex="-1"></a>cluster <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(scaled_data, <span class="at">centers=</span>scaled_data, <span class="at">nstart=</span><span class="dv">5</span>)</span>
+<span id="cb9-6"><a href="data-mining.html#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="data-mining.html#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#plotting the clusters</span></span>
+<span id="cb9-8"><a href="data-mining.html#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">dev.list</span>()))</span>
+<span id="cb9-9"><a href="data-mining.html#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>() <span class="co">#use if r throws error while displaying the plot</span></span>
+<span id="cb9-10"><a href="data-mining.html#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(Cluster_wss, <span class="at">data =</span> scaled_data)</span>
+<span id="cb9-11"><a href="data-mining.html#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="data-mining.html#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#summarizing the clusters with respect to the original dataset</span></span>
+<span id="cb9-13"><a href="data-mining.html#cb9-13" aria-hidden="true" tabindex="-1"></a>profile.kmeans <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data,cluster_wss<span class="sc">$</span>cluster) </span>
+<span id="cb9-14"><a href="data-mining.html#cb9-14" aria-hidden="true" tabindex="-1"></a>all.k <span class="ot">&lt;-</span> profile.kmeans <span class="sc">%&gt;%</span> </span>
+<span id="cb9-15"><a href="data-mining.html#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster_wss<span class="sc">$</span>cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb9-16"><a href="data-mining.html#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean.Channel=</span><span class="fu">mean</span>(Channel),</span>
+<span id="cb9-17"><a href="data-mining.html#cb9-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Region=</span><span class="fu">mean</span>(Region),</span>
+<span id="cb9-18"><a href="data-mining.html#cb9-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Fresh=</span><span class="fu">mean</span>(Fresh),</span>
+<span id="cb9-19"><a href="data-mining.html#cb9-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Milk=</span><span class="fu">mean</span>(Milk),</span>
+<span id="cb9-20"><a href="data-mining.html#cb9-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Grocery=</span><span class="fu">mean</span>(Grocery),</span>
+<span id="cb9-21"><a href="data-mining.html#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Frozen=</span><span class="fu">mean</span>(Frozen),</span>
+<span id="cb9-22"><a href="data-mining.html#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Detergents_Paper=</span><span class="fu">mean</span>(Detergents_Paper),</span>
+<span id="cb9-23"><a href="data-mining.html#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Delicassen=</span><span class="fu">mean</span>(Delicassen))</span></code></pre></div>
 </div>
 <div id="dbscan" class="section level6" number="5.2.1.1.1.2">
 <h6><span class="header-section-number">5.2.1.1.1.2</span> DBSCAN</h6>
@@ -781,12 +993,47 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 <p>Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.</p>
 <p>Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
 <p>Use a dendrogram to visualize.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="data-mining.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb10-2"><a href="data-mining.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb10-3"><a href="data-mining.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span>
+<span id="cb10-4"><a href="data-mining.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># hierarchical clustering and visualization through agnes</span></span>
+<span id="cb10-5"><a href="data-mining.html#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski</span></span>
+<span id="cb10-6"><a href="data-mining.html#cb10-6" aria-hidden="true" tabindex="-1"></a>dist.matrix <span class="ot">&lt;-</span> <span class="fu">dist</span>(scaled_data, <span class="at">method=</span><span class="st">&quot;method&quot;</span>)</span>
+<span id="cb10-7"><a href="data-mining.html#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="data-mining.html#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># method - Average, Single, Ward, Weighted </span></span>
+<span id="cb10-9"><a href="data-mining.html#cb10-9" aria-hidden="true" tabindex="-1"></a>h1.comp.eucl<span class="ot">=</span><span class="fu">agnes</span>(dist.matrix,<span class="at">method=</span><span class="st">&quot;method&quot;</span>) </span>
+<span id="cb10-10"><a href="data-mining.html#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="data-mining.html#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the tree</span></span>
+<span id="cb10-12"><a href="data-mining.html#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(h1.comp.eucl, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Dendrogram of agnes&quot;</span>)</span>
+<span id="cb10-13"><a href="data-mining.html#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="data-mining.html#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#agglomerative coefficient</span></span>
+<span id="cb10-15"><a href="data-mining.html#cb10-15" aria-hidden="true" tabindex="-1"></a>h1.comp.eucl </span>
+<span id="cb10-16"><a href="data-mining.html#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="data-mining.html#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># use a value of k for stopping the dendogram </span></span>
+<span id="cb10-18"><a href="data-mining.html#cb10-18" aria-hidden="true" tabindex="-1"></a>cut_avg <span class="ot">&lt;-</span> <span class="fu">cutree</span>(h1.comp.eucl, <span class="at">k=</span>num)</span>
+<span id="cb10-19"><a href="data-mining.html#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="data-mining.html#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the clusters with colors</span></span>
+<span id="cb10-21"><a href="data-mining.html#cb10-21" aria-hidden="true" tabindex="-1"></a>avg_dend_obj <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(h1.comp.eucl)</span>
+<span id="cb10-22"><a href="data-mining.html#cb10-22" aria-hidden="true" tabindex="-1"></a>avg_col_dend <span class="ot">&lt;-</span> <span class="fu">color_branches</span>(avg_dend_obj,<span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb10-23"><a href="data-mining.html#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(avg_col_dend)</span></code></pre></div>
 </div>
 <div id="divisive" class="section level6" number="5.2.1.1.2.2">
 <h6><span class="header-section-number">5.2.1.1.2.2</span> Divisive</h6>
 <p>Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
 <p>Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).</p>
 <p>Use a dendrogram to visualize.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="data-mining.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb11-2"><a href="data-mining.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb11-3"><a href="data-mining.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># hierarchical clustering and visualization through Diana</span></span>
+<span id="cb11-4"><a href="data-mining.html#cb11-4" aria-hidden="true" tabindex="-1"></a>hc4 <span class="ot">&lt;-</span> <span class="fu">diana</span>(scaled_data)</span>
+<span id="cb11-5"><a href="data-mining.html#cb11-5" aria-hidden="true" tabindex="-1"></a>hc4</span>
+<span id="cb11-6"><a href="data-mining.html#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="data-mining.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the tree</span></span>
+<span id="cb11-8"><a href="data-mining.html#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(hc4, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Dendrogram of diana&quot;</span>)</span>
+<span id="cb11-9"><a href="data-mining.html#cb11-9" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc4, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb11-10"><a href="data-mining.html#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="data-mining.html#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">pltree</span>(hc4, <span class="at">hang=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">cex =</span> <span class="fl">0.6</span>,<span class="at">main =</span><span class="st">&quot;Dendrogram of diana&quot;</span> )</span>
+<span id="cb11-12"><a href="data-mining.html#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc4, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -813,10 +1060,40 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 <div id="data-processing-1" class="section level4" number="5.2.2.1">
 <h4><span class="header-section-number">5.2.2.1</span> Data Processing</h4>
 <p>To conduct association analysis, transactional data must be provided in a wide format.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data-mining.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb12-2"><a href="data-mining.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
+<span id="cb12-3"><a href="data-mining.html#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb12-4"><a href="data-mining.html#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="data-mining.html#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># id - any unique column in the dataset</span></span>
+<span id="cb12-6"><a href="data-mining.html#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># description - list of products</span></span>
+<span id="cb12-7"><a href="data-mining.html#cb12-7" aria-hidden="true" tabindex="-1"></a>trans.data <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">split</span>(dataset, dataset), <span class="st">&quot;transactions&quot;</span>)</span>
+<span id="cb12-8"><a href="data-mining.html#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(trans.data)</span>
+<span id="cb12-9"><a href="data-mining.html#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="data-mining.html#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing the top products</span></span>
+<span id="cb12-11"><a href="data-mining.html#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># type=&quot;relative&quot;,&quot;absolute&quot;</span></span>
+<span id="cb12-12"><a href="data-mining.html#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">itemFrequencyPlot</span>(trans.data, </span>
+<span id="cb12-13"><a href="data-mining.html#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="at">topN=</span><span class="dv">10</span>, </span>
+<span id="cb12-14"><a href="data-mining.html#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="at">type=</span><span class="st">&quot;absolute&quot;</span>,</span>
+<span id="cb12-15"><a href="data-mining.html#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="at">col=</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&#39;Pastel2&#39;</span>), </span>
+<span id="cb12-16"><a href="data-mining.html#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">&quot;Absolute Item Frequency Plot&quot;</span>)</span></code></pre></div>
 </div>
 <div id="finding-association-rules" class="section level4" number="5.2.2.2">
 <h4><span class="header-section-number">5.2.2.2</span> Finding Association Rules</h4>
 <p>There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data-mining.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb13-2"><a href="data-mining.html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb13-3"><a href="data-mining.html#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="data-mining.html#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Mining the rules </span></span>
+<span id="cb13-5"><a href="data-mining.html#cb13-5" aria-hidden="true" tabindex="-1"></a>association.rules <span class="ot">&lt;-</span> <span class="fu">apriori</span>(transactional_data, <span class="at">parameter =</span> <span class="fu">list</span>(<span class="at">supp=</span><span class="fl">0.001</span>, </span>
+<span id="cb13-6"><a href="data-mining.html#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="at">conf=</span><span class="fl">0.8</span>,</span>
+<span id="cb13-7"><a href="data-mining.html#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="at">maxlen=</span><span class="dv">10</span>))</span>
+<span id="cb13-8"><a href="data-mining.html#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="data-mining.html#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(association.rules)</span>
+<span id="cb13-10"><a href="data-mining.html#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="data-mining.html#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing rules in the form of a table</span></span>
+<span id="cb13-12"><a href="data-mining.html#cb13-12" aria-hidden="true" tabindex="-1"></a>rules.table <span class="ot">&lt;-</span> <span class="fu">inspect</span>(association.rules[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span>
+<span id="cb13-13"><a href="data-mining.html#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rules.table)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;direction&quot;</span></span>
+<span id="cb13-14"><a href="data-mining.html#cb13-14" aria-hidden="true" tabindex="-1"></a>rules.table <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(lift)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(lhs,rhs,lift,confidence,count)</span></code></pre></div>
 </div>
 <div id="assessing-association-rule-strength" class="section level4" number="5.2.2.3">
 <h4><span class="header-section-number">5.2.2.3</span> Assessing Association Rule Strength</h4>
@@ -824,6 +1101,25 @@ document.write('<button id="backToTop"><a href="#section-" style="color: white">
 1) <strong>Support:</strong> the probability of seeing these items together.
 2) <strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)
 3) <strong>Lift:</strong> how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-mining.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb14-2"><a href="data-mining.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb14-3"><a href="data-mining.html#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="data-mining.html#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#rule for a particular product</span></span>
+<span id="cb14-5"><a href="data-mining.html#cb14-5" aria-hidden="true" tabindex="-1"></a>product.rule  <span class="ot">=</span> <span class="fu">apriori</span>(transactional_data, </span>
+<span id="cb14-6"><a href="data-mining.html#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="at">parameter =</span> <span class="fu">list</span>(<span class="at">supp=</span><span class="fl">0.001</span>, <span class="at">conf=</span><span class="fl">0.7</span>),</span>
+<span id="cb14-7"><a href="data-mining.html#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="at">appearance =</span> <span class="fu">list</span>(<span class="at">default=</span><span class="st">&quot;lhs&quot;</span>,<span class="at">rhs=</span><span class="st">&quot;Product&quot;</span>))</span>
+<span id="cb14-8"><a href="data-mining.html#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="data-mining.html#cb14-9" aria-hidden="true" tabindex="-1"></a>product.rule.table <span class="ot">&lt;-</span> <span class="fu">inspect</span>(product.rule)</span>
+<span id="cb14-10"><a href="data-mining.html#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(product.rule.table)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;direction&quot;</span></span>
+<span id="cb14-11"><a href="data-mining.html#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="data-mining.html#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizing rules in the form of a table</span></span>
+<span id="cb14-13"><a href="data-mining.html#cb14-13" aria-hidden="true" tabindex="-1"></a>product.rule.table <span class="sc">%&gt;%</span> </span>
+<span id="cb14-14"><a href="data-mining.html#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(lift)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-15"><a href="data-mining.html#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(lhs,rhs,lift,confidence,count)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data-mining.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Interactive graphs</span></span>
+<span id="cb15-2"><a href="data-mining.html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#by: confidence, lift , support</span></span>
+<span id="cb15-3"><a href="data-mining.html#cb15-3" aria-hidden="true" tabindex="-1"></a>top10Rules <span class="ot">&lt;-</span> <span class="fu">head</span>(association.rules, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">by =</span> <span class="st">&quot;confidence&quot;</span>)</span>
+<span id="cb15-4"><a href="data-mining.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(top10Rules, <span class="at">method =</span> <span class="st">&quot;graph&quot;</span>,  <span class="at">engine =</span> <span class="st">&quot;htmlwidget&quot;</span>)</span></code></pre></div>
 </div>
 <div id="miscellaneous-notes" class="section level4" number="5.2.2.4">
 <h4><span class="header-section-number">5.2.2.4</span> Miscellaneous Notes</h4>

@@ -311,6 +311,129 @@ snippet fdr_modeval
 															, BIC_lm = BIC(${2:finalmodel})
 															, Ra2_lm = summary(${2:finalmodel})\$adj.r.squared)
 
+##################################################################################
+#Data Mining Snippets
+##################################################################################		
+#Snippet 1: fdr_dm_ktune (tuning k using caret)
+snippet fdr_dm_ktune
+	library(caret)
+	library(ggplot2)
+	set.seed(12345)
+	grid = expand.grid(k = seq(1:20)) #Can adjust the range of k if needed
+	
+	tuned_knn = caret::train(factor(${1:ResponseVariable}) ~., method= "knn",
+													data = subset(${2:train}, select = -c(${3:Column1ToExclude}, ${4:Column2ToExclude})),
+													trControl = trainControl(method = 'cv',
+																										number = 3,
+																										search = "grid"),
+													tuneGrid = grid)
+	tuned_knn${5:$}results
+	
+	#Plot results to determine which k maximizes accuracy
+	ggplot(tuned_knn${5:$}results, aes(x=k, y=Accuracy)) +
+		geom_line()
+	
+	#The following line of code works as well
+	tuned_knn${5:$}results[which.max(tuned_knn${5:$}results${5:$}Accuracy),]
+
+#Snippet 2: fdr_dm_knn (run knn)
+snippet fdr_dm_knn
+	#Running KNN requires specifying:
+	## (1) train.x: Training predictor variable(s) values
+	## (2) test.x: Test predictor variable(s) values
+	## (3) train.y: Training response variable values
+	## (4) k: Number of clusters
+	library(class)
+	predict.test=class::knn(${1:train.x},${2:test.x},${3:train.y},k=${4:NumberOfClusters})
+	
+	#Determine misclassification rate
+	sum(predict.test != ${3:train.y})/length(${3:train.y})
+
+#Snippet 3: fdr_dm_classtree (create classification tree and evaluate variable importance)
+snippet fdr_dm_classtree
+	#Creates a classification tree
+	library(rpart)
+	library(rpart.plot)
+	library(ggplot2)
+	
+	BC.tree = rpart(${1:ResponseVariable} ~ . , data = ${2:train}, method = 'class',
+									parms = list(split='gini')) ## or 'information'
+	summary(BC.tree)
+	
+	#Print the actual tree
+	print(BC.tree)
+	rpart.plot(BC.tree)
+	
+	#Variable importance
+	BC.tree${3:$}variable.importance
+	
+	varimp.data = data.frame(BC.tree${3:$}variable.importance)
+	varimp.data${3:$}names = as.character(rownames(varimp.data))
+	
+	ggplot(data = varimp.data,aes(x = fct_reorder(names,BC.tree${3:$}variable.importance), y = BC.tree${3:$}variable.importance)) +
+		geom_bar(stat="identity") +
+		coord_flip() +
+		labs(x="Variable Name",y="Variable Importance")
+
+#Snippet 4: fdr_dm_regtree (create regression tree and evaluate variable importance)
+snippet fdr_dm_regtree
+	library(rpart)
+	library(rpart.plot)
+	library(ggplot2)
+	
+	R.tree = rpart(${1:ResponseVariable} ~ . , data = ${2:train}
+								, method = 'anova' #Regression tree
+								, control = rpart.control(minsplit = 10)) #the minimum number of observations that must exist in a node in order for a split to be attempted.
+	summary(R.tree)
+	printcp(R.tree)
+
+	#Print the actual tree
+	print(R.tree)
+	rpart.plot(R.tree)
+	
+	#Variable importance
+	R.tree${3:$}variable.importance
+	
+	varimp.data = data.frame(R.tree${3:$}variable.importance)
+	varimp.data${3:$}names = as.character(rownames(varimp.data))
+	
+	ggplot(data = varimp.data,aes(x = fct_reorder(names,R.tree${3:$}variable.importance), y = R.tree${3:$}variable.importance)) +
+		geom_bar(stat="identity") +
+		coord_flip() +
+	labs(x="Variable Name",y="Variable Importance")
+	
+#Snippet 5: fdr_dm_evaluation (calculate evaluation metrics)
+snippet fdr_dm_evaluation
+	#Classification Evaluation metrics
+	#Use CART model to predict new values for train and test datasets
+	trainscores = predict(${1:ClassificationTreeVariable}, type='class') #Class for classification trees; vector for regression trees
+	testscores = predict(${1:ClassificationTreeVariable}, test, type='class')
+	
+	#Training/testing misclassification rate:
+	sum(trainscores!=${2:train}${6:$}${3:ResponseVariable})/nrow(${2:train})
+	sum(testscores!=${4:test}${6:$}${3:ResponseVariable})/nrow(${4:test})
+
+	#Regression Evaluation metrics
+	#Use CART regression model to predict new values for train and test datasets
+	trainscores = predict(${5:RegressionTreeVariable}, type='vector') #Class for classification trees; vector for regression trees
+	testscores = predict(${5:RegressionTreeVariable}, test, type='vector')
+	
+	#Training/testing MAE and MAPE (regression):
+	mean(abs(trainscores-train${6:$}${3:ResponseVariable}))
+	mean(abs((trainscores-train${6:$}${3:ResponseVariable})/train${6:$}${3:ResponseVariable}))
+	
+	mean(abs(testscores-test${6:$}${3:ResponseVariable}))
+	mean(abs((testscores-test${6:$}${3:ResponseVariable})/test${6:$}${3:ResponseVariable}))
+
+#Snippet 6: fdr_dm_prunetree (prune the tree based on cp values)
+snippet fdr_dm_prunetree
+	#Visualize cp values
+	plotcp(${1:TreeVariable})  
+	
+	#Prune tree based on cp value
+		pruned.tree<-prune(${1:TreeVariable},cp=0.05)
+		printcp(pruned.tree)
+
 ## K-Means
 
 snippet fdr_dm_continous
