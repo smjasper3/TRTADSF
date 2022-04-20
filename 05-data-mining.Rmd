@@ -220,7 +220,7 @@ Flat clustering is a type of hard clustering, meaning each observation can only 
 
 <span style="color:blue;"> *snippet fdr_dm_k_Means *</span>
 
-K-means is a type of hard clustering, meaning each observation can only belong to one cluster. It is also flat rather than hierarchical so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).
+K-means is a type of flat clustering, so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).
 
 K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
 
@@ -281,9 +281,9 @@ all.k <- profile.kmeans %>%
 ```
 
 ###### DBSCAN
-DBSCAN  is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of flat clustering because epsilon needs to be specified, which the algorithm will pick automatically. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.
+DBSCAN  is a type of flat clustering because epsilon needs to be specified. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.
 
-Unlike k-means, it is a spatial clustering algorithm, which clusters based on a distance matrix.
+Unlike k-means, DBSCAN is a spatial clustering algorithm, which clusters based on a distance matrix.
 
 A downside to DBSCAN is that since it is a spatial clustering algorithm, it can confuse semantic meanings when the observations occupy the same space. For this reason, it is a good idea to plot the data first to see if clustering spatially is a good option.
 
@@ -295,7 +295,7 @@ Hierarchical clustering is a type of hard clustering, meaning each observation c
 
 Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you. 
 
-Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
+Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures that can be used to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
 
 Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
 
@@ -334,7 +334,7 @@ plot(avg_col_dend)
 
 Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.
 
-Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
+Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they are all in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
 
 Use a dendrogram to visualize.
 
@@ -359,14 +359,14 @@ rect.hclust(hc4, k = 5, border = 2:10)
 Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.
 
 ##### FCM
-Fuzzy c-means clustering (FCM) is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. The number of clusters and iterations need to be specified.
+Fuzzy c-means clustering (FCM) is a type of fuzzy clustering. The number of clusters and iterations need to be specified.
 
-It randomly assigns observations to clusters initially and then corrects clusters with each iteration to minimize error.
+FCM randomly assigns observations to clusters initially and then corrects clusters with each iteration to minimize error.
 
 More information on FCM can be found [here](https://www.datanovia.com/en/lessons/fuzzy-clustering-essentials/fuzzy-c-means-clustering-algorithm/). 
 
 ##### GMM
-Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. If using Gaussian rather than frequentist analytic approaches, these probabilities can serve at the posterior distribution. 
+Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve at the posterior distribution in later analytics. 
 
 GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.
 
