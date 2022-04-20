@@ -214,6 +214,12 @@ Flat and hierarchical are two types of hard clustering. Flat clustering methods 
 Flat clustering is a type of hard clustering, meaning each observation can only belong to one cluster. Flat clustering requires a resolution parameter, such as how many clusters to create (k) or step size (epsilon). 
 
 ###### K-means
+<span style="color:blue;"> *snippet fdr_dm_scal *</span>
+
+<span style="color:blue;"> *snippet fdr_dm_clusters *</span>
+
+<span style="color:blue;"> *snippet fdr_dm_k_Means *</span>
+
 K-means is a type of hard clustering, meaning each observation can only belong to one cluster. It is also flat rather than hierarchical so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).
 
 K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
@@ -285,6 +291,8 @@ A downside to DBSCAN is that since it is a spatial clustering algorithm, it can 
 Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.
 
 ###### Agglomerative
+<span style="color:blue;"> *snippet fdr_dm_agglomerative *</span>
+
 Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you. 
 
 Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
@@ -322,6 +330,8 @@ plot(avg_col_dend)
 
 
 ###### Divisive
+<span style="color:blue;"> *snippet fdr_dm_divisive *</span>
+
 Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.
 
 Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
@@ -367,6 +377,8 @@ More information on GMM can be found [here](https://www.mathworks.com/help/stats
 ### Assocation Analysis
 
 #### Data Processing
+<span style="color:blue;"> *snippet fdr_dm_transactional_dataset*</span>
+
 To conduct association analysis, transactional data must be provided in a wide format.
 
 ```{r fdr_dm_transactional_dataset, eval=FALSE}
@@ -391,6 +403,8 @@ main="Absolute Item Frequency Plot")
 ```
 
 #### Finding Association Rules
+<span style="color:blue;"> *snippet fdr_dm_mining_rules*</span>
+
 There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.
 
 ```{r fdr_dm_mining_rules, eval=FALSE}
@@ -413,6 +427,10 @@ rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
 ```
 
 #### Assessing Association Rule Strength
+<span style="color:blue;"> *snippet fdr_dm_product_mining_rule*</span>
+
+<span style="color:blue;"> *snippet fdr_dm_interactive_graph*</span>
+
 There are three main statistics in measuring the strength of an association rule:
 1) __Support:__ the probability of seeing these items together.
 2) __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)

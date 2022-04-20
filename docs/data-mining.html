@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 5 Data Mining | Data Mining</title>
   <meta name="description" content="Chapter 5 Data Mining | Data Mining" />
-  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Data Mining | Data Mining" />
   <meta property="og:type" content="book" />
-  
   
   
   
@@ -32,7 +31,6 @@
   
 <link rel="prev" href="time-series.html"/>
 <link rel="next" href="machine-learning.html"/>
-<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -50,8 +48,9 @@
 
 
 
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
       <script>
 /* ========================================================================
@@ -755,14 +754,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="data-mining" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Data Mining</h1>
-<div id="supervised" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> Supervised</h2>
-<div id="knn" class="section level3" number="5.1.1">
-<h3><span class="header-section-number">5.1.1</span> KNN</h3>
-<div id="choose-k" class="section level4" number="5.1.1.1">
-<h4><span class="header-section-number">5.1.1.1</span> Choose K</h4>
+<div id="data-mining" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Data Mining<a href="data-mining.html#data-mining" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="supervised" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Supervised<a href="data-mining.html#supervised" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="knn" class="section level3 hasAnchor" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> KNN<a href="data-mining.html#knn" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="choose-k" class="section level4 hasAnchor" number="5.1.1.1">
+<h4><span class="header-section-number">5.1.1.1</span> Choose K<a href="data-mining.html#choose-k" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span style="color:blue;"> <em>snippet fdr_dm_ktune </em></span></p>
 <p>The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data-mining.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
@@ -785,18 +784,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-18"><a href="data-mining.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#The following line of code works as well</span></span>
 <span id="cb1-19"><a href="data-mining.html#cb1-19" aria-hidden="true" tabindex="-1"></a>tuned_knn<span class="sc">$</span>results[<span class="fu">which.max</span>(tuned_knn<span class="sc">$</span>results<span class="sc">$</span>Accuracy),]</span></code></pre></div>
 </div>
-<div id="measuring-distance" class="section level4" number="5.1.1.2">
-<h4><span class="header-section-number">5.1.1.2</span> Measuring Distance</h4>
+<div id="measuring-distance" class="section level4 hasAnchor" number="5.1.1.2">
+<h4><span class="header-section-number">5.1.1.2</span> Measuring Distance<a href="data-mining.html#measuring-distance" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.</p>
 </div>
-<div id="classificationprediction-rules" class="section level4" number="5.1.1.3">
-<h4><span class="header-section-number">5.1.1.3</span> Classification/Prediction Rules</h4>
+<div id="classificationprediction-rules" class="section level4 hasAnchor" number="5.1.1.3">
+<h4><span class="header-section-number">5.1.1.3</span> Classification/Prediction Rules<a href="data-mining.html#classificationprediction-rules" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The output or value of a new observation is based on the nearest neighbors of the new observation. However, there are many different ways to have those neighbors define the new observation.</p>
 <p><strong>Classification:</strong> majority rules is the most common classification rule, with the most frequent target outcome value within the nearest neighbors being used to determine the classification. If using this method, it is best to set an odd k value such that there are no ties in voting (if there are two classes). Another example for a classification rule is weighting the vote by the nearness of the neighbor. Alternatively, the user can set another rule if it is expected to fit the data better.</p>
 <p><strong>Prediction:</strong> common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.</p>
 </div>
-<div id="assumptions-and-other-notes" class="section level4" number="5.1.1.4">
-<h4><span class="header-section-number">5.1.1.4</span> Assumptions and Other Notes</h4>
+<div id="assumptions-and-other-notes" class="section level4 hasAnchor" number="5.1.1.4">
+<h4><span class="header-section-number">5.1.1.4</span> Assumptions and Other Notes<a href="data-mining.html#assumptions-and-other-notes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span style="color:blue;"> <em>snippet fdr_dm_knn </em></span></p>
 <p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
 <p>In order to run KNN in R, all categorical variables must first be converted into numeric variables.</p>
@@ -812,20 +811,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-10"><a href="data-mining.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(predict.test <span class="sc">!=</span> train.y)<span class="sc">/</span><span class="fu">length</span>(train.y)</span></code></pre></div>
 </div>
 </div>
-<div id="cart-classification-and-regression-trees" class="section level3" number="5.1.2">
-<h3><span class="header-section-number">5.1.2</span> CART: Classification and Regression Trees</h3>
-<div id="data-processing" class="section level4" number="5.1.2.1">
-<h4><span class="header-section-number">5.1.2.1</span> Data Processing</h4>
+<div id="cart-classification-and-regression-trees" class="section level3 hasAnchor" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> CART: Classification and Regression Trees<a href="data-mining.html#cart-classification-and-regression-trees" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="data-processing" class="section level4 hasAnchor" number="5.1.2.1">
+<h4><span class="header-section-number">5.1.2.1</span> Data Processing<a href="data-mining.html#data-processing" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Decision trees can handle categorical, continuous, and discrete data. However, ordinal variables tend to be treated as continuous to preserve the importance of order. Decision trees can also handle missing values by setting those values as a “missing” category.</p>
 <p>Before building the model, create separate train and test datasets (a validation dataset is optional). The decision tree will be trained on the training dataset and evaluated on the test dataset.</p>
 </div>
-<div id="choosing-best-splits" class="section level4" number="5.1.2.2">
-<h4><span class="header-section-number">5.1.2.2</span> Choosing Best Splits</h4>
+<div id="choosing-best-splits" class="section level4 hasAnchor" number="5.1.2.2">
+<h4><span class="header-section-number">5.1.2.2</span> Choosing Best Splits<a href="data-mining.html#choosing-best-splits" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong>Classification:</strong> maximizing purity is the determining factor in identifying the best splits within classification trees. Purity measures how homogeneous the nodes are following split points. Most commonly, Gini and Entropy are used as measures of impurity to calculate the best splits.</p>
 <p><strong>Regression:</strong> minimizing SSE (Sum of Squared Errors) determines the splits within the tree.</p>
 </div>
-<div id="model-building-and-predictions" class="section level4" number="5.1.2.3">
-<h4><span class="header-section-number">5.1.2.3</span> Model Building and Predictions</h4>
+<div id="model-building-and-predictions" class="section level4 hasAnchor" number="5.1.2.3">
+<h4><span class="header-section-number">5.1.2.3</span> Model Building and Predictions<a href="data-mining.html#model-building-and-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span style="color:blue;"> <em>snippet fdr_dm_classtree </em></span></p>
 <p><span style="color:blue;"> <em>snippet fdr_dm_regtree </em></span></p>
 <p>After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.</p>
@@ -878,8 +877,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-23"><a href="data-mining.html#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
 <span id="cb4-24"><a href="data-mining.html#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Variable Name&quot;</span>,<span class="at">y=</span><span class="st">&quot;Variable Importance&quot;</span>)</span></code></pre></div>
 </div>
-<div id="evaluation" class="section level4" number="5.1.2.4">
-<h4><span class="header-section-number">5.1.2.4</span> Evaluation</h4>
+<div id="evaluation" class="section level4 hasAnchor" number="5.1.2.4">
+<h4><span class="header-section-number">5.1.2.4</span> Evaluation<a href="data-mining.html#evaluation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span style="color:blue;"> <em>snippet fdr_dm_evaluation </em></span></p>
 <p>Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data-mining.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Classification Evaluation metrics</span></span>
@@ -903,8 +902,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-19"><a href="data-mining.html#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(testscores<span class="sc">-</span>test<span class="sc">$</span>ResponseVariable))</span>
 <span id="cb5-20"><a href="data-mining.html#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>((testscores<span class="sc">-</span>test<span class="sc">$</span>ResponseVariable)<span class="sc">/</span>test<span class="sc">$</span>ResponseVariable))</span></code></pre></div>
 </div>
-<div id="pruning-and-tuning" class="section level4" number="5.1.2.5">
-<h4><span class="header-section-number">5.1.2.5</span> Pruning and Tuning</h4>
+<div id="pruning-and-tuning" class="section level4 hasAnchor" number="5.1.2.5">
+<h4><span class="header-section-number">5.1.2.5</span> Pruning and Tuning<a href="data-mining.html#pruning-and-tuning" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span style="color:blue;"> <em>snippet fdr_dm_prunetree </em></span></p>
 <p>Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.</p>
 <p>After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.</p>
@@ -917,22 +916,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </div>
-<div id="unsupervised" class="section level2" number="5.2">
-<h2><span class="header-section-number">5.2</span> Unsupervised</h2>
-<div id="data-clustering" class="section level3" number="5.2.1">
-<h3><span class="header-section-number">5.2.1</span> Data Clustering</h3>
+<div id="unsupervised" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Unsupervised<a href="data-mining.html#unsupervised" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="data-clustering" class="section level3 hasAnchor" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Data Clustering<a href="data-mining.html#data-clustering" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Clustering allows groups to be found within a dataset. It is unsupervised, so we do not know which group an observation belongs to in advance.</p>
 <p>Evaluating cluster results is nontrivial as the target variable is not known. However, the Silhouette Coefficient and Dunn’s Index are two evaluation options. More information can be found <a href="https://www.analyticsvidhya.com/blog/2020/10/quick-guide-to-evaluation-metrics-for-supervised-and-unsupervised-machine-learning/">here</a>.</p>
 <p>Hard clustering means each observation can only belong to one cluster. Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.</p>
-<div id="hard" class="section level4" number="5.2.1.1">
-<h4><span class="header-section-number">5.2.1.1</span> Hard</h4>
+<div id="hard" class="section level4 hasAnchor" number="5.2.1.1">
+<h4><span class="header-section-number">5.2.1.1</span> Hard<a href="data-mining.html#hard" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Hard clustering assigns each observation to only one cluster.</p>
 <p>Flat and hierarchical are two types of hard clustering. Flat clustering methods require a resolution parameter, while hierarchical clustering methods do not need a resolution parameter (which will be determined automatically).</p>
-<div id="flat" class="section level5" number="5.2.1.1.1">
-<h5><span class="header-section-number">5.2.1.1.1</span> Flat</h5>
+<div id="flat" class="section level5 hasAnchor" number="5.2.1.1.1">
+<h5><span class="header-section-number">5.2.1.1.1</span> Flat<a href="data-mining.html#flat" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Flat clustering is a type of hard clustering, meaning each observation can only belong to one cluster. Flat clustering requires a resolution parameter, such as how many clusters to create (k) or step size (epsilon).</p>
-<div id="k-means" class="section level6" number="5.2.1.1.1.1">
-<h6><span class="header-section-number">5.2.1.1.1.1</span> K-means</h6>
+<div id="k-means" class="section level6 hasAnchor" number="5.2.1.1.1.1">
+<h6><span class="header-section-number">5.2.1.1.1.1</span> K-means<a href="data-mining.html#k-means" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p><span style="color:blue;"> <em>snippet fdr_dm_scal </em></span></p>
+<p><span style="color:blue;"> <em>snippet fdr_dm_clusters </em></span></p>
+<p><span style="color:blue;"> <em>snippet fdr_dm_k_Means </em></span></p>
 <p>K-means is a type of hard clustering, meaning each observation can only belong to one cluster. It is also flat rather than hierarchical so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).</p>
 <p>K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
 <p>The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE.</p>
@@ -977,18 +979,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-22"><a href="data-mining.html#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Detergents_Paper=</span><span class="fu">mean</span>(Detergents_Paper),</span>
 <span id="cb9-23"><a href="data-mining.html#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.Delicassen=</span><span class="fu">mean</span>(Delicassen))</span></code></pre></div>
 </div>
-<div id="dbscan" class="section level6" number="5.2.1.1.1.2">
-<h6><span class="header-section-number">5.2.1.1.1.2</span> DBSCAN</h6>
+<div id="dbscan" class="section level6 hasAnchor" number="5.2.1.1.1.2">
+<h6><span class="header-section-number">5.2.1.1.1.2</span> DBSCAN<a href="data-mining.html#dbscan" class="anchor-section" aria-label="Anchor link to header"></a></h6>
 <p>DBSCAN is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of flat clustering because epsilon needs to be specified, which the algorithm will pick automatically. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.</p>
 <p>Unlike k-means, it is a spatial clustering algorithm, which clusters based on a distance matrix.</p>
 <p>A downside to DBSCAN is that since it is a spatial clustering algorithm, it can confuse semantic meanings when the observations occupy the same space. For this reason, it is a good idea to plot the data first to see if clustering spatially is a good option.</p>
 </div>
 </div>
-<div id="hierarchical" class="section level5" number="5.2.1.1.2">
-<h5><span class="header-section-number">5.2.1.1.2</span> Hierarchical</h5>
+<div id="hierarchical" class="section level5 hasAnchor" number="5.2.1.1.2">
+<h5><span class="header-section-number">5.2.1.1.2</span> Hierarchical<a href="data-mining.html#hierarchical" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.</p>
-<div id="agglomerative" class="section level6" number="5.2.1.1.2.1">
-<h6><span class="header-section-number">5.2.1.1.2.1</span> Agglomerative</h6>
+<div id="agglomerative" class="section level6 hasAnchor" number="5.2.1.1.2.1">
+<h6><span class="header-section-number">5.2.1.1.2.1</span> Agglomerative<a href="data-mining.html#agglomerative" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p><span style="color:blue;"> <em>snippet fdr_dm_agglomerative </em></span></p>
 <p>Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
 <p>Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.</p>
 <p>Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
@@ -1017,8 +1020,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-22"><a href="data-mining.html#cb10-22" aria-hidden="true" tabindex="-1"></a>avg_col_dend <span class="ot">&lt;-</span> <span class="fu">color_branches</span>(avg_dend_obj,<span class="at">k =</span> <span class="dv">5</span>)</span>
 <span id="cb10-23"><a href="data-mining.html#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(avg_col_dend)</span></code></pre></div>
 </div>
-<div id="divisive" class="section level6" number="5.2.1.1.2.2">
-<h6><span class="header-section-number">5.2.1.1.2.2</span> Divisive</h6>
+<div id="divisive" class="section level6 hasAnchor" number="5.2.1.1.2.2">
+<h6><span class="header-section-number">5.2.1.1.2.2</span> Divisive<a href="data-mining.html#divisive" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<p><span style="color:blue;"> <em>snippet fdr_dm_divisive </em></span></p>
 <p>Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
 <p>Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they areall in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).</p>
 <p>Use a dendrogram to visualize.</p>
@@ -1037,17 +1041,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </div>
-<div id="fuzzy" class="section level4" number="5.2.1.2">
-<h4><span class="header-section-number">5.2.1.2</span> Fuzzy</h4>
+<div id="fuzzy" class="section level4 hasAnchor" number="5.2.1.2">
+<h4><span class="header-section-number">5.2.1.2</span> Fuzzy<a href="data-mining.html#fuzzy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.</p>
-<div id="fcm" class="section level5" number="5.2.1.2.1">
-<h5><span class="header-section-number">5.2.1.2.1</span> FCM</h5>
+<div id="fcm" class="section level5 hasAnchor" number="5.2.1.2.1">
+<h5><span class="header-section-number">5.2.1.2.1</span> FCM<a href="data-mining.html#fcm" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Fuzzy c-means clustering (FCM) is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. The number of clusters and iterations need to be specified.</p>
 <p>It randomly assigns observations to clusters initially and then corrects clusters with each iteration to minimize error.</p>
 <p>More information on FCM can be found <a href="https://www.datanovia.com/en/lessons/fuzzy-clustering-essentials/fuzzy-c-means-clustering-algorithm/">here</a>.</p>
 </div>
-<div id="gmm" class="section level5" number="5.2.1.2.2">
-<h5><span class="header-section-number">5.2.1.2.2</span> GMM</h5>
+<div id="gmm" class="section level5 hasAnchor" number="5.2.1.2.2">
+<h5><span class="header-section-number">5.2.1.2.2</span> GMM<a href="data-mining.html#gmm" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. Observations are given probabilities of being in the different clusters rather than being assigned to any one cluster. If using Gaussian rather than frequentist analytic approaches, these probabilities can serve at the posterior distribution.</p>
 <p>GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.</p>
 <p>A downside is that GMM may not converge if there are not enough representatives from each cluster.</p>
@@ -1055,10 +1059,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </div>
-<div id="assocation-analysis" class="section level3" number="5.2.2">
-<h3><span class="header-section-number">5.2.2</span> Assocation Analysis</h3>
-<div id="data-processing-1" class="section level4" number="5.2.2.1">
-<h4><span class="header-section-number">5.2.2.1</span> Data Processing</h4>
+<div id="assocation-analysis" class="section level3 hasAnchor" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Assocation Analysis<a href="data-mining.html#assocation-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="data-processing-1" class="section level4 hasAnchor" number="5.2.2.1">
+<h4><span class="header-section-number">5.2.2.1</span> Data Processing<a href="data-mining.html#data-processing-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_transactional_dataset</em></span></p>
 <p>To conduct association analysis, transactional data must be provided in a wide format.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data-mining.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
 <span id="cb12-2"><a href="data-mining.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
@@ -1077,8 +1082,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-15"><a href="data-mining.html#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="at">col=</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&#39;Pastel2&#39;</span>), </span>
 <span id="cb12-16"><a href="data-mining.html#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">&quot;Absolute Item Frequency Plot&quot;</span>)</span></code></pre></div>
 </div>
-<div id="finding-association-rules" class="section level4" number="5.2.2.2">
-<h4><span class="header-section-number">5.2.2.2</span> Finding Association Rules</h4>
+<div id="finding-association-rules" class="section level4 hasAnchor" number="5.2.2.2">
+<h4><span class="header-section-number">5.2.2.2</span> Finding Association Rules<a href="data-mining.html#finding-association-rules" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_mining_rules</em></span></p>
 <p>There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data-mining.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
 <span id="cb13-2"><a href="data-mining.html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -1095,8 +1101,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-13"><a href="data-mining.html#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rules.table)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;direction&quot;</span></span>
 <span id="cb13-14"><a href="data-mining.html#cb13-14" aria-hidden="true" tabindex="-1"></a>rules.table <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(lift)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(lhs,rhs,lift,confidence,count)</span></code></pre></div>
 </div>
-<div id="assessing-association-rule-strength" class="section level4" number="5.2.2.3">
-<h4><span class="header-section-number">5.2.2.3</span> Assessing Association Rule Strength</h4>
+<div id="assessing-association-rule-strength" class="section level4 hasAnchor" number="5.2.2.3">
+<h4><span class="header-section-number">5.2.2.3</span> Assessing Association Rule Strength<a href="data-mining.html#assessing-association-rule-strength" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><span style="color:blue;"> <em>snippet fdr_dm_product_mining_rule</em></span></p>
+<p><span style="color:blue;"> <em>snippet fdr_dm_interactive_graph</em></span></p>
 <p>There are three main statistics in measuring the strength of an association rule:
 1) <strong>Support:</strong> the probability of seeing these items together.
 2) <strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)
@@ -1121,8 +1129,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb15-3"><a href="data-mining.html#cb15-3" aria-hidden="true" tabindex="-1"></a>top10Rules <span class="ot">&lt;-</span> <span class="fu">head</span>(association.rules, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">by =</span> <span class="st">&quot;confidence&quot;</span>)</span>
 <span id="cb15-4"><a href="data-mining.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(top10Rules, <span class="at">method =</span> <span class="st">&quot;graph&quot;</span>,  <span class="at">engine =</span> <span class="st">&quot;htmlwidget&quot;</span>)</span></code></pre></div>
 </div>
-<div id="miscellaneous-notes" class="section level4" number="5.2.2.4">
-<h4><span class="header-section-number">5.2.2.4</span> Miscellaneous Notes</h4>
+<div id="miscellaneous-notes" class="section level4 hasAnchor" number="5.2.2.4">
+<h4><span class="header-section-number">5.2.2.4</span> Miscellaneous Notes<a href="data-mining.html#miscellaneous-notes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.</p>
 
 </div>
