@@ -24,10 +24,9 @@ knitr::opts_chunk$set(
 ### KNN
 
 #### Choose K
-<span style="color:blue;"> *snippet fdr_dm_ktune *</span> 
-
 The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.
 
+<span style="color:blue;"> *snippet fdr_dm_ktune *</span> 
 ```{r fdr_dm_ktune_codeblock, eval=FALSE}
 library(caret)
 library(ggplot2)
@@ -61,11 +60,11 @@ __Classification:__ majority rules is the most common classification rule, with 
 __Prediction:__ common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.
 
 #### Assumptions and Other Notes
-<span style="color:blue;"> *snippet fdr_dm_knn *</span> 
-
 KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.
 
 In order to run KNN in R, all categorical variables must first be converted into numeric variables.
+
+<span style="color:blue;"> *snippet fdr_dm_knn *</span>
 ```{r fdr_dm_knn_codeblock, eval=FALSE}
 #Running KNN requires specifying:
 ## (1) train.x: Training predictor variable(s) values
@@ -92,14 +91,11 @@ __Classification:__ maximizing purity is the determining factor in identifying t
 __Regression:__ minimizing SSE (Sum of Squared Errors) determines the splits within the tree.
 
 #### Model Building and Predictions
-<span style="color:blue;"> *snippet fdr_dm_classtree *</span>
-
-<span style="color:blue;"> *snippet fdr_dm_regtree *</span> 
-
 After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.
 
 In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.
 
+<span style="color:blue;"> *snippet fdr_dm_classtree *</span>
 ```{r fdr_dm_classtree_codeblock, eval=FALSE}
 #Creates a classification tree
 library(rpart)
@@ -126,6 +122,7 @@ ggplot(data = varimp.data,aes(x = fct_reorder(names,BC.tree$variable.importance)
   labs(x="Variable Name",y="Variable Importance")
 ```
 
+<span style="color:blue;"> *snippet fdr_dm_regtree *</span> 
 ```{r fdr_dm_regtree_codeblock, eval=FALSE}
 library(rpart)
 library(rpart.plot)
@@ -154,10 +151,9 @@ labs(x="Variable Name",y="Variable Importance")
 ```
 
 #### Evaluation
-<span style="color:blue;"> *snippet fdr_dm_evaluation *</span> 
-
 Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.
 
+<span style="color:blue;"> *snippet fdr_dm_evaluation *</span>
 ```{r fdr_dm_evaluation_codeblock, eval=FALSE}
 #Classification Evaluation metrics
 #Use CART model to predict new values for train and test datasets
@@ -182,12 +178,11 @@ mean(abs((testscores-test$ResponseVariable)/test$ResponseVariable))
 ```
 
 #### Pruning and Tuning
-<span style="color:blue;"> *snippet fdr_dm_prunetree *</span>
-
 Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.
 
 After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.
 
+<span style="color:blue;"> *snippet fdr_dm_prunetree *</span>
 ```{r fdr_dm_prunetree_codeblock, eval=FALSE}
 #Visualize cp values
 plotcp(TreeVariable)  
@@ -214,18 +209,13 @@ Flat and hierarchical are two types of hard clustering. Flat clustering methods 
 Flat clustering is a type of hard clustering, meaning each observation can only belong to one cluster. Flat clustering requires a resolution parameter, such as how many clusters to create (k) or step size (epsilon). 
 
 ###### K-means
-<span style="color:blue;"> *snippet fdr_dm_scal *</span>
-
-<span style="color:blue;"> *snippet fdr_dm_clusters *</span>
-
-<span style="color:blue;"> *snippet fdr_dm_k_Means *</span>
-
 K-means is a type of flat clustering, so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).
 
 K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
 
 The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE. 
 
+<span style="color:blue;"> *snippet fdr_dm_scal *</span>
 ```{r fdr_dm_scal, eval=FALSE}
 
 #standard scaling of data in data mining
@@ -238,6 +228,7 @@ normalize(dataset)
       
 ```
 
+<span style="color:blue;"> *snippet fdr_dm_clusters *</span>
 ```{r fdr_dm_clusters, eval=FALSE}
 
 # methodologies to find optimal number of clusters - 
@@ -252,7 +243,7 @@ dev.off()
 fviz_nbclust(scaled_data, kmeans, method="method",k.max=num)
 ```
 
-
+<span style="color:blue;"> *snippet fdr_dm_k_Means *</span>
 ```{r fdr_dm_k_Means, eval=FALSE}
 library(stats)
 library(factoextra)
@@ -291,8 +282,6 @@ A downside to DBSCAN is that since it is a spatial clustering algorithm, it can 
 Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.
 
 ###### Agglomerative
-<span style="color:blue;"> *snippet fdr_dm_agglomerative *</span>
-
 Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you. 
 
 Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures that can be used to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
@@ -301,6 +290,7 @@ Agglomerative clustering requires continuous variables, so all categorical varia
 
 Use a dendrogram to visualize.
 
+<span style="color:blue;"> *snippet fdr_dm_agglomerative *</span>
 ```{r fdr_dm_agglomerative, eval=FALSE}
 
 library(stats)
@@ -330,14 +320,13 @@ plot(avg_col_dend)
 
 
 ###### Divisive
-<span style="color:blue;"> *snippet fdr_dm_divisive *</span>
-
 Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.
 
 Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they are all in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
 
 Use a dendrogram to visualize.
 
+<span style="color:blue;"> *snippet fdr_dm_divisive *</span>
 ```{r fdr_dm_divisive, eval=FALSE}
 
 library(stats)
@@ -377,10 +366,9 @@ More information on GMM can be found [here](https://www.mathworks.com/help/stats
 ### Assocation Analysis
 
 #### Data Processing
-<span style="color:blue;"> *snippet fdr_dm_transactional_dataset*</span>
-
 To conduct association analysis, transactional data must be provided in a wide format.
 
+<span style="color:blue;"> *snippet fdr_dm_transactional_dataset*</span>
 ```{r fdr_dm_transactional_dataset, eval=FALSE}
 
 library(arules)
@@ -403,10 +391,9 @@ main="Absolute Item Frequency Plot")
 ```
 
 #### Finding Association Rules
-<span style="color:blue;"> *snippet fdr_dm_mining_rules*</span>
-
 There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.
 
+<span style="color:blue;"> *snippet fdr_dm_mining_rules*</span>
 ```{r fdr_dm_mining_rules, eval=FALSE}
 
 library(arules)
@@ -427,15 +414,12 @@ rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
 ```
 
 #### Assessing Association Rule Strength
-<span style="color:blue;"> *snippet fdr_dm_product_mining_rule*</span>
-
-<span style="color:blue;"> *snippet fdr_dm_interactive_graph*</span>
-
 There are three main statistics in measuring the strength of an association rule:
 1) __Support:__ the probability of seeing these items together.
 2) __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
 3) __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
 
+<span style="color:blue;"> *snippet fdr_dm_product_mining_rule*</span>
 ```{r fdr_dm_product_mining_rule, eval=FALSE}
 
 library(arules)
@@ -455,6 +439,7 @@ product.rule.table %>%
   select(lhs,rhs,lift,confidence,count)
 ```
 
+<span style="color:blue;"> *snippet fdr_dm_interactive_graph*</span>
 ```{r fdr_dm_interactive_graph, eval=FALSE}
 
 #Interactive graphs
