@@ -20,6 +20,73 @@ knitr::opts_chunk$set(
 
 # Data Mining
 
+```{r diagram, echo=FALSE}
+grViz(diagram = "digraph flowchart {
+  node [fontname = arial, shape = oval, fontsize=20, style=filled, color=cornsilk2]
+  tab1 [label = '@@1']
+  tab2 [label = '@@2', URL='#supervised', fontcolor='blue']
+  tab3 [label = '@@3', URL='#knn', fontcolor='blue']
+  tab4 [label = '@@4', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab5 [label = '@@5', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab6 [label = '@@6', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab7 [label = '@@7', URL='#unsupervised', fontcolor='blue']
+  tab8 [label = '@@8', URL='#data-clustering', fontcolor='blue']
+  tab9 [label = '@@9', URL='#association-analysis', fontcolor='blue']
+  tab10 [label = '@@10', URL='#hard', fontcolor='blue']
+  tab11 [label = '@@11', URL='#flat', fontcolor='blue']
+  tab12 [label = '@@12', URL='#k-means', fontcolor='blue']
+  tab13 [label = '@@13', URL='#dbscan', fontcolor='blue']
+  tab14 [label = '@@14', URL='#hierarchical', fontcolor='blue']
+  tab15 [label = '@@15', URL='#divisive', fontcolor='blue']
+  tab16 [label = '@@16', URL='#agglomerative', fontcolor='blue']
+  tab17 [label = '@@17', URL='#fuzzy', fontcolor='blue']
+  tab18 [label = '@@18', URL='#fcm', fontcolor='blue']
+  tab19 [label = '@@19', URL='#gmm', fontcolor='blue']
+  
+  tab1 -> tab2;
+  tab1 ->tab7;
+  tab2 -> tab3;
+  tab2 -> tab4;
+  tab4 -> tab5;
+  tab4 -> tab6;
+  tab7 -> tab8;
+  tab7 -> tab9;
+  tab8 -> tab10;
+  tab8 ->tab17;
+  tab10 -> tab11;
+  tab10 -> tab12;
+  tab10 ->tab13;
+  tab10 ->tab14;
+  tab14->tab15;
+  tab14->tab16;
+  tab17 -> tab18;
+  tab17 ->tab19;
+  
+}
+  
+  [1]: 'Data Mining Algorithms'
+  [2]: 'Supervised'   
+  [3]: 'K-NN' 
+  [4]: 'CART'    
+  [5]: 'Classification Trees'
+  [6]: 'Regression Trees'
+  [7]: 'Unsupervised'
+  [8]: 'Data Clustering'
+  [9]: 'Association Analysis'
+  [10]: 'Hard'
+  [11]: 'Flat'
+  [12]: 'K-Means'
+  [13]: 'DBSCAN'
+  [14]: 'Hierarchical'
+  [15]: 'Divisive'
+  [16]: 'Agglomerative'
+  [17]: 'Fuzzy'
+  [18]: 'FCM'
+  [19]: 'GMM'
+  
+  ")
+```
+
 ## Supervised
 ### KNN
 
@@ -60,7 +127,7 @@ __Classification:__ majority rules is the most common classification rule, with 
 __Prediction:__ common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.
 
 #### Assumptions and Other Notes
-KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.
+KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training dataset). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.
 
 In order to run KNN in R, all categorical variables must first be converted into numeric variables.
 
@@ -91,7 +158,7 @@ __Classification:__ maximizing purity is the determining factor in identifying t
 __Regression:__ minimizing SSE (Sum of Squared Errors) determines the splits within the tree.
 
 #### Model Building and Predictions
-After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.
+After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training dataset is used to find the best splits for predictions.
 
 In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.
 
@@ -282,7 +349,7 @@ A downside to DBSCAN is that since it is a spatial clustering algorithm, it can 
 Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.
 
 ###### Agglomerative
-Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you. 
+Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering, so you don’t have to specify the number of clusters; the algorithm will pick it for you. 
 
 Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures that can be used to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
 
@@ -355,7 +422,7 @@ FCM randomly assigns observations to clusters initially and then corrects cluste
 More information on FCM can be found [here](https://www.datanovia.com/en/lessons/fuzzy-clustering-essentials/fuzzy-c-means-clustering-algorithm/). 
 
 ##### GMM
-Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve at the posterior distribution in later analytics. 
+Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve as the posterior distribution in later analytics. 
 
 GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.
 
@@ -363,7 +430,7 @@ A downside is that GMM may not converge if there are not enough representatives 
 
 More information on GMM can be found [here](https://www.mathworks.com/help/stats/clustering-using-gaussian-mixture-models.html). 
 
-### Assocation Analysis
+### Association Analysis
 
 #### Data Processing
 To conduct association analysis, transactional data must be provided in a wide format.
@@ -415,9 +482,10 @@ rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
 
 #### Assessing Association Rule Strength
 There are three main statistics in measuring the strength of an association rule:
-1) __Support:__ the probability of seeing these items together.
-2) __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
-3) __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
+
+1. __Support:__ the probability of seeing these items together.
+2. __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
+3. __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
 
 <span style="color:blue;"> *snippet fdr_dm_product_mining_rule*</span>
 ```{r fdr_dm_product_mining_rule, eval=FALSE}

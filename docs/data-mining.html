@@ -52,6 +52,10 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 
       <script>
 /* ========================================================================
@@ -719,7 +723,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.2" data-path="data-mining.html"><a href="data-mining.html#unsupervised"><i class="fa fa-check"></i><b>5.2</b> Unsupervised</a>
 <ul>
 <li class="chapter" data-level="5.2.1" data-path="data-mining.html"><a href="data-mining.html#data-clustering"><i class="fa fa-check"></i><b>5.2.1</b> Data Clustering</a></li>
-<li class="chapter" data-level="5.2.2" data-path="data-mining.html"><a href="data-mining.html#assocation-analysis"><i class="fa fa-check"></i><b>5.2.2</b> Assocation Analysis</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-mining.html"><a href="data-mining.html#association-analysis"><i class="fa fa-check"></i><b>5.2.2</b> Association Analysis</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="machine-learning.html"><a href="machine-learning.html"><i class="fa fa-check"></i><b>6</b> Machine Learning</a></li>
@@ -757,6 +761,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="data-mining" class="section level1" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Data Mining</h1>
+<div id="htmlwidget-350bcf985141d1306a20" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-350bcf985141d1306a20">{"x":{"diagram":"digraph flowchart {\n  node [fontname = arial, shape = oval, fontsize=20, style=filled, color=cornsilk2]\n  tab1 [label = \"Data Mining Algorithms\"]\n  tab2 [label = \"Supervised\", URL=\"#supervised\", fontcolor=\"blue\"]\n  tab3 [label = \"K-NN\", URL=\"#knn\", fontcolor=\"blue\"]\n  tab4 [label = \"CART\", URL=\"#cart-classification-and-regression-trees\", fontcolor=\"blue\"]\n  tab5 [label = \"Classification Trees\", URL=\"#cart-classification-and-regression-trees\", fontcolor=\"blue\"]\n  tab6 [label = \"Regression Trees\", URL=\"#cart-classification-and-regression-trees\", fontcolor=\"blue\"]\n  tab7 [label = \"Unsupervised\", URL=\"#unsupervised\", fontcolor=\"blue\"]\n  tab8 [label = \"Data Clustering\", URL=\"#data-clustering\", fontcolor=\"blue\"]\n  tab9 [label = \"Association Analysis\", URL=\"#association-analysis\", fontcolor=\"blue\"]\n  tab10 [label = \"Hard\", URL=\"#hard\", fontcolor=\"blue\"]\n  tab11 [label = \"Flat\", URL=\"#flat\", fontcolor=\"blue\"]\n  tab12 [label = \"K-Means\", URL=\"#k-means\", fontcolor=\"blue\"]\n  tab13 [label = \"DBSCAN\", URL=\"#dbscan\", fontcolor=\"blue\"]\n  tab14 [label = \"Hierarchical\", URL=\"#hierarchical\", fontcolor=\"blue\"]\n  tab15 [label = \"Divisive\", URL=\"#divisive\", fontcolor=\"blue\"]\n  tab16 [label = \"Agglomerative\", URL=\"#agglomerative\", fontcolor=\"blue\"]\n  tab17 [label = \"Fuzzy\", URL=\"#fuzzy\", fontcolor=\"blue\"]\n  tab18 [label = \"FCM\", URL=\"#fcm\", fontcolor=\"blue\"]\n  tab19 [label = \"GMM\", URL=\"#gmm\", fontcolor=\"blue\"]\n  \n  tab1 -> tab2;\n  tab1 ->tab7;\n  tab2 -> tab3;\n  tab2 -> tab4;\n  tab4 -> tab5;\n  tab4 -> tab6;\n  tab7 -> tab8;\n  tab7 -> tab9;\n  tab8 -> tab10;\n  tab8 ->tab17;\n  tab10 -> tab11;\n  tab10 -> tab12;\n  tab10 ->tab13;\n  tab10 ->tab14;\n  tab14->tab15;\n  tab14->tab16;\n  tab17 -> tab18;\n  tab17 ->tab19;\n  \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="supervised" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Supervised</h2>
 <div id="knn" class="section level3" number="5.1.1">
@@ -797,7 +803,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="assumptions-and-other-notes" class="section level4" number="5.1.1.4">
 <h4><span class="header-section-number">5.1.1.4</span> Assumptions and Other Notes</h4>
-<p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training data set). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
+<p>KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training dataset). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.</p>
 <p>In order to run KNN in R, all categorical variables must first be converted into numeric variables.</p>
 <p><span style="color:blue;"> <em>snippet fdr_dm_knn </em></span></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="data-mining.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Running KNN requires specifying:</span></span>
@@ -826,7 +832,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="model-building-and-predictions" class="section level4" number="5.1.2.3">
 <h4><span class="header-section-number">5.1.2.3</span> Model Building and Predictions</h4>
-<p>After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training data set is used to find the best splits for predictions.</p>
+<p>After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training dataset is used to find the best splits for predictions.</p>
 <p>In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.</p>
 <p><span style="color:blue;"> <em>snippet fdr_dm_classtree </em></span></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data-mining.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Creates a classification tree</span></span>
@@ -992,7 +998,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.</p>
 <div id="agglomerative" class="section level6" number="5.2.1.1.2.1">
 <h6><span class="header-section-number">5.2.1.1.2.1</span> Agglomerative</h6>
-<p>Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.</p>
+<p>Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering, so you don’t have to specify the number of clusters; the algorithm will pick it for you.</p>
 <p>Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures that can be used to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.</p>
 <p>Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized.</p>
 <p>Use a dendrogram to visualize.</p>
@@ -1053,15 +1059,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="gmm" class="section level5" number="5.2.1.2.2">
 <h5><span class="header-section-number">5.2.1.2.2</span> GMM</h5>
-<p>Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve at the posterior distribution in later analytics.</p>
+<p>Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve as the posterior distribution in later analytics.</p>
 <p>GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.</p>
 <p>A downside is that GMM may not converge if there are not enough representatives from each cluster.</p>
 <p>More information on GMM can be found <a href="https://www.mathworks.com/help/stats/clustering-using-gaussian-mixture-models.html">here</a>.</p>
 </div>
 </div>
 </div>
-<div id="assocation-analysis" class="section level3" number="5.2.2">
-<h3><span class="header-section-number">5.2.2</span> Assocation Analysis</h3>
+<div id="association-analysis" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Association Analysis</h3>
 <div id="data-processing-1" class="section level4" number="5.2.2.1">
 <h4><span class="header-section-number">5.2.2.1</span> Data Processing</h4>
 <p>To conduct association analysis, transactional data must be provided in a wide format.</p>
@@ -1104,10 +1110,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="assessing-association-rule-strength" class="section level4" number="5.2.2.3">
 <h4><span class="header-section-number">5.2.2.3</span> Assessing Association Rule Strength</h4>
-<p>There are three main statistics in measuring the strength of an association rule:
-1) <strong>Support:</strong> the probability of seeing these items together.
-2) <strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)
-3) <strong>Lift:</strong> how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.</p>
+<p>There are three main statistics in measuring the strength of an association rule:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Support:</strong> the probability of seeing these items together.</li>
+<li><strong>Confidence:</strong> the probability of seeing the consequent (second item) given the antecedent (first item)</li>
+<li><strong>Lift:</strong> how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.</li>
+</ol>
 <p><span style="color:blue;"> <em>snippet fdr_dm_product_mining_rule</em></span></p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-mining.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arules)</span>
 <span id="cb14-2"><a href="data-mining.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
