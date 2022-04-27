@@ -3,7 +3,7 @@ title: "Linear Regression"
 author: "Sam Jasper and Jackson de Oliveira"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  bookdown::gitbook:
+  bookdown::gitbook
       
 ---
 
@@ -106,10 +106,9 @@ grViz("digraph {
 ```
 
 ## Select Alpha Level
-<span style="color:blue;"> *snippet fdr_alpha *</span> 
-
 There are three ways to select an alpha level prior to modeling. You can stick with the standard 0.05 cutoff, use the below sample size table (from a paper by Raftery), or use the below calculation based on sample size.
 
+<span style="color:blue;"> *snippet fdr_alpha *</span> 
 ```{r fdr_alpha_codeblock, eval=FALSE}
 #Determines alpha value based on sample size and BIC criterion
 alpha = 1-pchisq(log(nrow(dataset)),1)
@@ -121,11 +120,9 @@ alpha = 1-pchisq(log(nrow(dataset)),1)
 Assuming you have a reasonable number of variables, start by putting them all into a model to predict the target. Variable selection/ reduction will occur later in the process. If you have a large number of variables, you can consider variable reduction or a different analytical technique.
 
 ## Global F-Test
-
-<span style="color:blue;"> *snippet fdr_globalF* </span> 
-
 Once the linear model is created, a Global F test will discern if any of the variables are significant in predicting y. If no variables are significant, you should re-evaluate the variables or the model selected for this business problem. Assuming at least one variable is significant, continue with the modeling process.
 
+<span style="color:blue;"> *snippet fdr_globalF* </span> 
 ```{r fdr_globalF_codeblock, eval=FALSE}
 #Global F test: Determines if at least one variable is significant
 lm.model <- lm(targetvar ~ predvar1 + predvar2, data = dataset)
@@ -137,12 +134,10 @@ summary(lm.model)
 Next, you need to assess a number of assumptions that come with linear regression modeling. First evaluate if the predictor variables have a linear relationship with the response by evaluating their shape when plotted. If the variable looks like a quadratic (curve), polynomial, or not straight consider going back and creating higher order terms. 
 
 ### Linearity
-
-<span style="color:blue;"> *snippet fdr_assumptions_linearity* </span> 
-
 Check if they are linear (yes, keep moving)
 (No) If they look polynomial/ quadratic/ etc. reconsider higher order terms
 
+<span style="color:blue;"> *snippet fdr_assumptions_linearity* </span> 
 ```{r fdr_assumptions_linearity_codeblock, eval=FALSE}
 #Check to see if the below plot is random with an average value of zero
 library(ggplot2)
@@ -154,11 +149,9 @@ ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
 
 
 ### Independent Random Errors
-
-<span style="color:blue;"> *snippet fdr_assumptions_independence *</span> 
-
 Next check is the errors are independent by inspecting if the residuals show a pattern. This can also be determined statistically with the Durbin-Watson test. 
 
+<span style="color:blue;"> *snippet fdr_assumptions_independence *</span> 
 ```{r fdr_assumptions_independence_codeblock, eval=FALSE}
 #Can use plot to visually see time-dependence or use Durbin-Watson test
 library(ggplot2)
@@ -174,11 +167,9 @@ dwtest(lm.model,alternative="greater") #ii. Durbin-Watson test
 ```
 
 ### Random Errors Normally Distributed
-
-<span style="color:blue;"> *snippet fdr_assumptions_normdist *</span> 
-
 Next, there are three ways to check that the random errors are normally distribution. You can evaluate a histogram of the residuals, create a qq plot and look for a straight line, or do a formal test. The formal test is either Anderson-Darling or Shapiro-Wilk. Shapiro-Wilk is commonly used for smaller data sets. If the errors are not normal, consider a transformation such as box-cox or a log of the x's. 
 
+<span style="color:blue;"> *snippet fdr_assumptions_normdist *</span> 
 ```{r fdr_assumptions_normdist_codeblock, eval=FALSE}
 #Check to see if the below plot has a constant spread over the range of predicted values
 #Can use QQ-plot, Anderson-Darling test, or Shapiro-Wilk test
@@ -196,11 +187,9 @@ shapiro.test(lm.model$residuals) #iii. Shapiro-Wilk test. Better for smaller dat
 
 
 ### Random Error Constant Variance
-
-<span style="color:blue;"> *snippet fdr_assumptions_constvar *</span> 
-
 Then you need to further inspect the residuals by looking for patterns. If the residuals visually have a constant variance, then the random error assumption is met. This can also be evaluated statistically with the Spearman Rank Correlation. Values close to 0 mean the variance is constant. If it's not constant (visually or a spearman rank correlation close to 1 or -1) consider alternative options such as weighted least squares, transforming the data, or a different distribution (ex: Poisson)
 
+<span style="color:blue;"> *snippet fdr_assumptions_constvar *</span> 
 ```{r fdr_assumptions_constvar_codeblock, eval=FALSE}
 #Check to see if the below plot has a constant spread over the range of predicted values
 library(ggplot2)
@@ -212,17 +201,13 @@ ggplot(lm.model,aes(x=fitted(lm.model),y=resid(lm.model))) +
 
 
 ### Single Predictor?
-
 The final assumption to check is multicollinearity. If you only have 1 predictor, you can skip this step. 
-
 
 ### Multiple Predictors
 #### Check for Multicollinearity
-
-<span style="color:blue;"> *snippet fdr_assumptions_multicol *</span> 
-
 If you have multiple predictors check multicollinearity with VIF. If VIF is greater than 10, there is multicollinearity and you should remove the related variable or transform the variable. If the VIF is less than 10, continue on to influential observations/ outliers.
 
+<span style="color:blue;"> *snippet fdr_assumptions_multicol *</span> 
 ```{r fdr_assumptions_multicol_codeblock, eval=FALSE}
 #Check for correlation among predictor variables or calculate the variance inflation factor (VIF)
 library(car)
@@ -240,9 +225,6 @@ vif(lm.model) #ii. Variance inflation factor (VIF)
 Once all of the assumptions are met, consider handling influential observations and outliers. The strategies below to help identify influential observations, and 5 strategies to handle them once detected. 
 
 ### Identify influential observations 
-
-<span style="color:blue;"> *snippet fdr_influential*</span> 
-
 * Internally Studentized residuals (good for detecting outliers) 
 * Externally Studentized residuals (good for detecting outliers)
 * Cook's D (good for detecting influential observations)
@@ -250,6 +232,7 @@ Once all of the assumptions are met, consider handling influential observations 
 * DFBETAS (good for detecting influential observations) 
 * Hat values (good for detecting influential observations)
 
+<span style="color:blue;"> *snippet fdr_influential*</span>
 ```{r fdr_influential_codeblock, eval=FALSE}
 #Tests for finding influential observations
 library(ggplot2)
@@ -300,9 +283,6 @@ grid.arrange(c,d,e,f)
 ```
   
 ### Handle Outliers
-
-<span style="color:blue;"> *snippet fdr_outliers*</span> 
-
 1. Recheck the data to ensure that no transcription or data entry errors 
   occurred. 
 2. If the data is valid, one possible explanation is that 
@@ -313,6 +293,7 @@ grid.arrange(c,d,e,f)
 4. Robust Regression (Covered Later in Program) 
 5. Weighted Least Squares (WCS)
 
+<span style="color:blue;"> *snippet fdr_outliers*</span> 
 ```{r fdr_outliers_codeblock, eval=FALSE}
 #Tests for finding outliers
 library(ggplot2)
@@ -338,11 +319,9 @@ grid.arrange(a,b)
 ```
 
 ## Variable Selection
-
-<span style="color:blue;"> *snippet fdr_varselect_linreg*</span> 
-
 When the data is postured and ready for analysis, start with variable selection. At this point you can choose between many selection techniques such as forward, backward, stepwise, and regularization (L1, L2, or elastic net). If you have a lot of variable you're looking to cut back on, consider backward selection or variable clustering techniques. You also need to choose a model evaluation statistic of AIC, BIC, or p-value.
 
+<span style="color:blue;"> *snippet fdr_varselect_linreg*</span> 
 ```{r fdr_varselect_linreg_codeblock, eval=FALSE}
 #Create training model
 library(dplyr)
@@ -380,11 +359,9 @@ plot(train_lasso, xvar = "lambda")
 ```
 
 ## Model Evaluation
-
-<span style="color:blue;"> *snippet fdr_modeval*</span> 
-
 After the variables are selected, it's time to run the linear regression. Evaluation metrics such as MAE, MAPE, RMSE, and MSE can be computed with the model output. Additionally, the chosen evaluation statistic (AIC, BIC, or adjusted r^2) and be computed on the validation set for comparison and on the test set (or the test rolled into the rest of the data) to report the final metrics. 
 
+<span style="color:blue;"> *snippet fdr_modeval*</span>
 ```{r fdr_modeval_codeblock, eval=FALSE}
 #Evaluate various metrics for model accuracy
 library(dplyr)
@@ -405,7 +382,6 @@ testdataset %>%
 ```
 
 ## Summarize Findings
-
 With these final metrics, you can summarize any business insights, findings, and takeaways based on the influential variables, model metrics, and business context. 
 
 

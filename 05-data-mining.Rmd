@@ -1,4 +1,522 @@
+---
+title: "Data Mining"
+author: "Sam Jasper, Lindsey Fisher, Surabhi Sood, Sarah Stott, and Liam Dao"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  bookdown::gitbook
+      
+---
+
+
+```{r setup, echo=FALSE, warning=FALSE, include=FALSE}
+library(DiagrammeR)
+# Add a common class name for every chunks
+knitr::opts_chunk$set(
+  echo = TRUE)
+
+# RTFButton = grViz("digraph {0 [label = 'START HERE!', color='chocolate1', style=filled, URL='#select-alpha-level', fontcolor='blue']}")
+
+```
+
 # Data Mining
 
-WIP
+```{r diagram, echo=FALSE}
+grViz(diagram = "digraph flowchart {
+  node [fontname = arial, shape = oval, fontsize=20, style=filled, color=cornsilk2]
+  tab1 [label = '@@1']
+  tab2 [label = '@@2', URL='#supervised', fontcolor='blue']
+  tab3 [label = '@@3', URL='#knn', fontcolor='blue']
+  tab4 [label = '@@4', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab5 [label = '@@5', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab6 [label = '@@6', URL='#cart-classification-and-regression-trees', fontcolor='blue']
+  tab7 [label = '@@7', URL='#unsupervised', fontcolor='blue']
+  tab8 [label = '@@8', URL='#data-clustering', fontcolor='blue']
+  tab9 [label = '@@9', URL='#association-analysis', fontcolor='blue']
+  tab10 [label = '@@10', URL='#hard', fontcolor='blue']
+  tab11 [label = '@@11', URL='#flat', fontcolor='blue']
+  tab12 [label = '@@12', URL='#k-means', fontcolor='blue']
+  tab13 [label = '@@13', URL='#dbscan', fontcolor='blue']
+  tab14 [label = '@@14', URL='#hierarchical', fontcolor='blue']
+  tab15 [label = '@@15', URL='#divisive', fontcolor='blue']
+  tab16 [label = '@@16', URL='#agglomerative', fontcolor='blue']
+  tab17 [label = '@@17', URL='#fuzzy', fontcolor='blue']
+  tab18 [label = '@@18', URL='#fcm', fontcolor='blue']
+  tab19 [label = '@@19', URL='#gmm', fontcolor='blue']
+  
+  tab1 -> tab2;
+  tab1 ->tab7;
+  tab2 -> tab3;
+  tab2 -> tab4;
+  tab4 -> tab5;
+  tab4 -> tab6;
+  tab7 -> tab8;
+  tab7 -> tab9;
+  tab8 -> tab10;
+  tab8 ->tab17;
+  tab10 -> tab11;
+  tab10 -> tab12;
+  tab10 ->tab13;
+  tab10 ->tab14;
+  tab14->tab15;
+  tab14->tab16;
+  tab17 -> tab18;
+  tab17 ->tab19;
+  
+}
+  
+  [1]: 'Data Mining Algorithms'
+  [2]: 'Supervised'   
+  [3]: 'K-NN' 
+  [4]: 'CART'    
+  [5]: 'Classification Trees'
+  [6]: 'Regression Trees'
+  [7]: 'Unsupervised'
+  [8]: 'Data Clustering'
+  [9]: 'Association Analysis'
+  [10]: 'Hard'
+  [11]: 'Flat'
+  [12]: 'K-Means'
+  [13]: 'DBSCAN'
+  [14]: 'Hierarchical'
+  [15]: 'Divisive'
+  [16]: 'Agglomerative'
+  [17]: 'Fuzzy'
+  [18]: 'FCM'
+  [19]: 'GMM'
+  
+  ")
+```
 
+## Supervised
+### KNN
+
+#### Choose K
+The first step in employing a KNN model is to define the value of k. In this algorithm technique, k is the number of neighbors to assess before determining the value of the current observation. A low k results in a higher variance model (and will lean towards overfitting), whereas a high k results in a higher bias model (and will lean towards underfitting). A common practice is to start with a k = sqrt(n) (where n is the number of samples in the training dataset) and tune this parameter utilizing a validation set or cross-validation.
+
+<span style="color:blue;"> *snippet fdr_dm_ktune *</span> 
+```{r fdr_dm_ktune_codeblock, eval=FALSE}
+library(caret)
+library(ggplot2)
+set.seed(12345)
+grid = expand.grid(k = seq(1:20)) #Can adjust the range of k if needed
+
+tuned_knn = caret::train(factor(ResponseVariable) ~., method= "knn",
+                        data = subset(train, select = -c(Column1ToExclude, Column2ToExclude)),
+                        trControl = trainControl(method = 'cv',
+                                                  number = 3,
+                                                  search = "grid"),
+                        tuneGrid = grid)
+tuned_knn$results
+
+#Plot results to determine which k maximizes accuracy
+ggplot(tuned_knn$results, aes(x=k, y=Accuracy)) +
+  geom_line()
+
+#The following line of code works as well
+tuned_knn$results[which.max(tuned_knn$results$Accuracy),]
+```
+
+#### Measuring Distance
+Euclidean distance is the base measure used in most KNN functions. However, there are other well-known distance measures that can be used such as cosine similarity measure, Minkowski distance, and Chi-square. Alternatively, users can also create their own, more creative distance metrics based on knowledge of the data used. Each distance measurement will affect the results differently.
+
+#### Classification/Prediction Rules
+The output or value of a new observation is based on the nearest neighbors of the new observation. However, there are many different ways to have those neighbors define the new observation.
+
+__Classification:__ majority rules is the most common classification rule, with the most frequent target outcome value within the nearest neighbors being used to determine the classification. If using this method, it is best to set an odd k value such that there are no ties in voting (if there are two classes). Another example for a classification rule is weighting the vote by the nearness of the neighbor. Alternatively, the user can set another rule if it is expected to fit the data better.
+
+__Prediction:__ common rules are using the mean or median of the nearest neighbors. Again, the user can set another rule if it is expected to create better predictions.
+
+#### Assumptions and Other Notes
+KNN is a non-parametric algorithm with no assumptions about the underlying data (other than having a representative training dataset). Additionally, it is considered a “lazy learner” algorithm as it does not learn from the data, but instead stores it and makes classifications/predictions based on the rules set by the user. It is a very simple and flexible model that allows for creativity by the user. However, it can be computationally expensive when classifying new observations, requires storage for the training data, is susceptible to noise, and can require a lot of data preprocessing for distance metrics. Additionally, the model can produce very different results depending on the user-defined parameters and decisions.
+
+In order to run KNN in R, all categorical variables must first be converted into numeric variables.
+
+<span style="color:blue;"> *snippet fdr_dm_knn *</span>
+```{r fdr_dm_knn_codeblock, eval=FALSE}
+#Running KNN requires specifying:
+## (1) train.x: Training predictor variable(s) values
+## (2) test.x: Test predictor variable(s) values
+## (3) train.y: Training response variable values
+## (4) k: Number of clusters
+library(class)
+predict.test=class::knn(train.x,test.x,train.y,k=NumberOfClusters)
+
+#Determine misclassification rate
+sum(predict.test != train.y)/length(train.y)
+```
+
+### CART: Classification and Regression Trees
+
+#### Data Processing
+Decision trees can handle categorical, continuous, and discrete data. However, ordinal variables tend to be treated as continuous to preserve the importance of order. Decision trees can also handle missing values by setting those values as a “missing” category.
+
+Before building the model, create separate train and test datasets (a validation dataset is optional). The decision tree will be trained on the training dataset and evaluated on the test dataset.
+
+#### Choosing Best Splits
+__Classification:__ maximizing purity is the determining factor in identifying the best splits within classification trees. Purity measures how homogeneous the nodes are following split points. Most commonly, Gini and Entropy are used as measures of impurity to calculate the best splits.
+
+__Regression:__ minimizing SSE (Sum of Squared Errors) determines the splits within the tree.
+
+#### Model Building and Predictions
+After determining the splits and processing the data, the next step is to build the model. There are several functions within R and Python that will help in easily creating a regression or classification tree. When building the model, the training dataset is used to find the best splits for predictions.
+
+In a classification tree, the prediction is the most common class in the final node. In a regression tree, the prediction is the average value of the target variable in the final node. For both instances, users can change the determination criteria in the final node if desired.
+
+<span style="color:blue;"> *snippet fdr_dm_classtree *</span>
+```{r fdr_dm_classtree_codeblock, eval=FALSE}
+#Creates a classification tree
+library(rpart)
+library(rpart.plot)
+library(ggplot2)
+
+BC.tree = rpart(ResponseVariable ~ . , data = train, method = 'class',
+                parms = list(split='gini')) ## or 'information'
+summary(BC.tree)
+
+#Print the actual tree
+print(BC.tree)
+rpart.plot(BC.tree)
+
+#Variable importance
+BC.tree$variable.importance
+
+varimp.data = data.frame(BC.tree$variable.importance)
+varimp.data$names = as.character(rownames(varimp.data))
+
+ggplot(data = varimp.data,aes(x = fct_reorder(names,BC.tree$variable.importance), y = BC.tree$variable.importance)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x="Variable Name",y="Variable Importance")
+```
+
+<span style="color:blue;"> *snippet fdr_dm_regtree *</span> 
+```{r fdr_dm_regtree_codeblock, eval=FALSE}
+library(rpart)
+library(rpart.plot)
+library(ggplot2)
+
+R.tree = rpart(ResponseVariable ~ . , data = train
+              , method = 'anova' #Regression tree
+              , control = rpart.control(minsplit = 10)) #the minimum number of observations that must exist in a node in order for a split to be attempted.
+summary(R.tree)
+printcp(R.tree)
+
+#Print the actual tree
+print(R.tree)
+rpart.plot(R.tree)
+
+#Variable importance
+R.tree$variable.importance
+
+varimp.data = data.frame(R.tree$variable.importance)
+varimp.data$names = as.character(rownames(varimp.data))
+
+ggplot(data = varimp.data,aes(x = fct_reorder(names,R.tree$variable.importance), y = R.tree$variable.importance)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+labs(x="Variable Name",y="Variable Importance")
+```
+
+#### Evaluation
+Confusion matrices, accuracy scores, and F1 scores are the most common evaluation metrics for classification problems. MAE, MAPE, RMSE, R-Squared, and Adjusted R-Squared are the most common evaluation metrics for regression analysis.
+
+<span style="color:blue;"> *snippet fdr_dm_evaluation *</span>
+```{r fdr_dm_evaluation_codeblock, eval=FALSE}
+#Classification Evaluation metrics
+#Use CART model to predict new values for train and test datasets
+trainscores = predict(ClassificationTreeVariable, type='class') #Class for classification trees; vector for regression trees
+testscores = predict(ClassificationTreeVariable, test, type='class')
+
+#Training/testing misclassification rate:
+sum(trainscores!=train$ResponseVariable)/nrow(train)
+sum(testscores!=test$ResponseVariable)/nrow(test)
+
+#Regression Evaluation metrics
+#Use CART regression model to predict new values for train and test datasets
+trainscores = predict(RegressionTreeVariable, type='vector') #Class for classification trees; vector for regression trees
+testscores = predict(RegressionTreeVariable, test, type='vector')
+
+#Training/testing MAE and MAPE (regression):
+mean(abs(trainscores-train$ResponseVariable))
+mean(abs((trainscores-train$ResponseVariable)/train$ResponseVariable))
+
+mean(abs(testscores-test$ResponseVariable))
+mean(abs((testscores-test$ResponseVariable)/test$ResponseVariable))
+```
+
+#### Pruning and Tuning
+Pruning decision trees can be helpful in preventing overfitting and reducing the computational power required to create the model. In a classification tree, pruning occurs by removing the nodes in a bottom-up fashion by first removing the splits with the lowest gain values (while optimizing performance on the validation dataset). For regression trees, pruning can be determined by assessing cross-validation error values and employing the “One Standard Error” rule. This includes evaluating the split with the lowest cross-validation error value and removing all splits within one standard error of that split.
+
+After creating and evaluating a model, it may be advantageous to tune the parameters available. Tuning grids can be used to find the optimal parameters on a training dataset that will help with prediction values for the validation and test sets. Depending on the language and package used, parameters may be different.
+
+<span style="color:blue;"> *snippet fdr_dm_prunetree *</span>
+```{r fdr_dm_prunetree_codeblock, eval=FALSE}
+#Visualize cp values
+plotcp(TreeVariable)  
+
+#Prune tree based on cp value
+  pruned.tree<-prune(TreeVariable,cp=0.05)
+  printcp(pruned.tree)
+```
+
+## Unsupervised
+### Data Clustering
+Clustering allows groups to be found within a dataset. It is unsupervised, so we do not know which group an observation belongs to in advance. 
+
+Evaluating cluster results is nontrivial as the target variable is not known. However, the Silhouette Coefficient and Dunn’s Index are two evaluation options. More information can be found [here](https://www.analyticsvidhya.com/blog/2020/10/quick-guide-to-evaluation-metrics-for-supervised-and-unsupervised-machine-learning/). 
+
+Hard clustering means each observation can only belong to one cluster. Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.
+
+#### Hard
+Hard clustering assigns each observation to only one cluster. 
+
+Flat and hierarchical are two types of hard clustering. Flat clustering methods require a resolution parameter, while hierarchical clustering methods do not need a resolution parameter (which will be determined automatically).
+
+##### Flat
+Flat clustering is a type of hard clustering, meaning each observation can only belong to one cluster. Flat clustering requires a resolution parameter, such as how many clusters to create (k) or step size (epsilon). 
+
+###### K-means
+K-means is a type of flat clustering, so the number of clusters must be specified. There are a variety of ways to pick the number of clusters (e.g., elbow plot, gap statistic, silhouette method, etc.).
+
+K-means requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
+
+The k-means algorithm will find the centroid (mean) of each variable by minimizing the sum of squares within (SSW). SSW is the clustering name for SSE. 
+
+<span style="color:blue;"> *snippet fdr_dm_scal *</span>
+```{r fdr_dm_scal, eval=FALSE}
+
+#standard scaling of data in data mining
+library(base)
+scale(dataset)
+
+#min-max scaling of data in data mining
+library(BBmisc)
+normalize(dataset)
+      
+```
+
+<span style="color:blue;"> *snippet fdr_dm_clusters *</span>
+```{r fdr_dm_clusters, eval=FALSE}
+
+# methodologies to find optimal number of clusters - 
+library(factoextra)
+#to find optimal number of clusters
+set.seed(12345)
+#if r throws an error for generating the plot
+while(!is.null(dev.list()))
+dev.off()
+# method : silhouette, wss method
+# k.max : integer value, number of clusters
+fviz_nbclust(scaled_data, kmeans, method="method",k.max=num)
+```
+
+<span style="color:blue;"> *snippet fdr_dm_k_Means *</span>
+```{r fdr_dm_k_Means, eval=FALSE}
+library(stats)
+library(factoextra)
+#creating clusters with centers obtains from silhoutte/wss/business context
+#centers and nstart - integer value
+cluster <- kmeans(scaled_data, centers=scaled_data, nstart=5)
+
+#plotting the clusters
+while(!is.null(dev.list()))
+dev.off() #use if r throws error while displaying the plot
+fviz_cluster(Cluster_wss, data = scaled_data)
+
+#summarizing the clusters with respect to the original dataset
+profile.kmeans <- cbind(data,cluster_wss$cluster) 
+all.k <- profile.kmeans %>% 
+  group_by(cluster_wss$cluster) %>%
+  summarise(mean.Channel=mean(Channel),
+            mean.Region=mean(Region),
+            mean.Fresh=mean(Fresh),
+            mean.Milk=mean(Milk),
+            mean.Grocery=mean(Grocery),
+            mean.Frozen=mean(Frozen),
+            mean.Detergents_Paper=mean(Detergents_Paper),
+            mean.Delicassen=mean(Delicassen))
+
+```
+
+###### DBSCAN
+DBSCAN  is a type of flat clustering because epsilon needs to be specified. Epsilon is the radius of the circle the algorithm looks within when enlarging the cluster size, and can be thought of as a step size.
+
+Unlike k-means, DBSCAN is a spatial clustering algorithm, which clusters based on a distance matrix.
+
+A downside to DBSCAN is that since it is a spatial clustering algorithm, it can confuse semantic meanings when the observations occupy the same space. For this reason, it is a good idea to plot the data first to see if clustering spatially is a good option.
+
+##### Hierarchical
+Hierarchical clustering is a type of hard clustering, meaning each observation can only belong to one cluster. The algorithm chooses the resolution parameter (such as the number of clusters) automatically. Dendrograms are often used to visualize hierarchical clustering output. There are two main types of hierarchical clustering: agglomerative and divisive.
+
+###### Agglomerative
+Agglomerative clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering, so you don’t have to specify the number of clusters; the algorithm will pick it for you. 
+
+Agglomerative clustering begins with all observations in their own individual clusters and combines them one at a time based on dissimilarity until they are all in one cluster. There are a number of distance measures that can be used to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.). There are also different linkage options (e.g., single, average, maximum, etc.), which should be chosen based on the cluster validation metric being used.
+
+Agglomerative clustering requires continuous variables, so all categorical variables must first be dummy coded. Outliers greatly affect the results, so continuous variables should be standardized. 
+
+Use a dendrogram to visualize.
+
+<span style="color:blue;"> *snippet fdr_dm_agglomerative *</span>
+```{r fdr_dm_agglomerative, eval=FALSE}
+
+library(stats)
+library(cluster)
+library(dendextend)
+# hierarchical clustering and visualization through agnes
+# method , based on datatype - euclidean, Manhattan, Maximum ,Canberra, Binary, Minkowski
+dist.matrix <- dist(scaled_data, method="method")
+
+# method - Average, Single, Ward, Weighted 
+h1.comp.eucl=agnes(dist.matrix,method="method") 
+
+# plotting the tree
+pltree(h1.comp.eucl, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
+
+#agglomerative coefficient
+h1.comp.eucl 
+
+# use a value of k for stopping the dendogram 
+cut_avg <- cutree(h1.comp.eucl, k=num)
+
+#visualizing the clusters with colors
+avg_dend_obj <- as.dendrogram(h1.comp.eucl)
+avg_col_dend <- color_branches(avg_dend_obj,k = 5)
+plot(avg_col_dend)
+```
+
+
+###### Divisive
+Divisive clustering is a type of hard clustering, meaning each observation can only belong to one cluster. It is also a type of hierarchical clustering and so you don’t have to specify the number of clusters; the algorithm will pick for you.
+
+Divisive clustering begins with all observations in one cluster and separates them one at a time based on dissimilarity until they are all in their own individual clusters. There are a number of distance measures to compute the dissimilarity matrix (e.g., Euclidean, Manhattan, etc.).
+
+Use a dendrogram to visualize.
+
+<span style="color:blue;"> *snippet fdr_dm_divisive *</span>
+```{r fdr_dm_divisive, eval=FALSE}
+
+library(stats)
+library(cluster)
+# hierarchical clustering and visualization through Diana
+hc4 <- diana(scaled_data)
+hc4
+
+# plotting the tree
+pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+clust <- cutree(hc4, k = 5)
+
+pltree(hc4, hang=-1, cex = 0.6,main ="Dendrogram of diana" )
+rect.hclust(hc4, k = 5, border = 2:10)
+
+```
+
+#### Fuzzy
+Fuzzy clustering gives observations probabilities of being in the different clusters rather than assigning them to any one cluster.
+
+##### FCM
+Fuzzy c-means clustering (FCM) is a type of fuzzy clustering. The number of clusters and iterations need to be specified.
+
+FCM randomly assigns observations to clusters initially and then corrects clusters with each iteration to minimize error.
+
+More information on FCM can be found [here](https://www.datanovia.com/en/lessons/fuzzy-clustering-essentials/fuzzy-c-means-clustering-algorithm/). 
+
+##### GMM
+Gaussian Mixture Model (GMM) clustering is a type of fuzzy clustering. If using Gaussian rather than frequentist analytic approaches, the resulting probabilities can serve as the posterior distribution in later analytics. 
+
+GMMs use maximum likelihood estimation and assume the data is made up of Gaussian distributions. Information from both the centers of the distributions and covariance matrices are used to define the elliptical density groupings into clusters.
+
+A downside is that GMM may not converge if there are not enough representatives from each cluster. 
+
+More information on GMM can be found [here](https://www.mathworks.com/help/stats/clustering-using-gaussian-mixture-models.html). 
+
+### Association Analysis
+
+#### Data Processing
+To conduct association analysis, transactional data must be provided in a wide format.
+
+<span style="color:blue;"> *snippet fdr_dm_transactional_dataset*</span>
+```{r fdr_dm_transactional_dataset, eval=FALSE}
+
+library(arules)
+library(base)
+library(RColorBrewer)
+
+# id - any unique column in the dataset
+# description - list of products
+trans.data <- as(split(dataset, dataset), "transactions")
+inspect(trans.data)
+
+# visualizing the top products
+# type="relative","absolute"
+itemFrequencyPlot(trans.data, 
+topN=10, 
+type="absolute",
+col=brewer.pal(8,'Pastel2'), 
+main="Absolute Item Frequency Plot")
+
+```
+
+#### Finding Association Rules
+There are built-in functions in R (arules) that can help identify association rules. It is common practice to establish minimum support and confidence values that must be met for the result to be printed. There are other parameters to create more specific rules, such as setting a minimum lift value.
+
+<span style="color:blue;"> *snippet fdr_dm_mining_rules*</span>
+```{r fdr_dm_mining_rules, eval=FALSE}
+
+library(arules)
+library(tidyverse)
+
+#Mining the rules 
+association.rules <- apriori(transactional_data, parameter = list(supp=0.001, 
+conf=0.8,
+maxlen=10))
+
+summary(association.rules)
+
+# visualizing rules in the form of a table
+rules.table <- inspect(association.rules[1:10])
+colnames(rules.table)[2] <- "direction"
+rules.table %>% arrange(desc(lift)) %>% select(lhs,rhs,lift,confidence,count)
+
+```
+
+#### Assessing Association Rule Strength
+There are three main statistics in measuring the strength of an association rule:
+
+1. __Support:__ the probability of seeing these items together.
+2. __Confidence:__ the probability of seeing the consequent (second item) given the antecedent (first item)
+3. __Lift:__ how much more likely the consequent is present given that the antecedent is already present than just seeing the consequent. Lifts higher than 1 are desirable.
+
+<span style="color:blue;"> *snippet fdr_dm_product_mining_rule*</span>
+```{r fdr_dm_product_mining_rule, eval=FALSE}
+
+library(arules)
+library(tidyverse)
+
+#rule for a particular product
+product.rule  = apriori(transactional_data, 
+parameter = list(supp=0.001, conf=0.7),
+appearance = list(default="lhs",rhs="Product"))
+
+product.rule.table <- inspect(product.rule)
+colnames(product.rule.table)[2] <- "direction"
+
+# visualizing rules in the form of a table
+product.rule.table %>% 
+  arrange(desc(lift)) %>% 
+  select(lhs,rhs,lift,confidence,count)
+```
+
+<span style="color:blue;"> *snippet fdr_dm_interactive_graph*</span>
+```{r fdr_dm_interactive_graph, eval=FALSE}
+
+#Interactive graphs
+#by: confidence, lift , support
+top10Rules <- head(association.rules, n = 10, by = "confidence")
+plot(top10Rules, method = "graph",  engine = "htmlwidget")
+
+```
+
+
+#### Miscellaneous Notes
+There is no time aspect in association analysis. Instead, we are analyzing what products or items are to be bought, removed, etc., simultaneously. When assessing two items, the support and lift will be the same when switching the order of the antecedent and consequent. However, the confidence will be different.
